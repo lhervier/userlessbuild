@@ -26,3 +26,14 @@ Example command file :
 	config,true,true
 	fr.asi.designer.userlessbuild.HDBuildSiteJob,<name of the project to build>
 	exit
+
+## Wait for automatic build to finish ##
+
+This job can be used to wait for build jobs to stop. Very usefull after importer a bunch of java projects, and you want that eclipse only exits when compilation is over.
+
+Example command file :
+
+	config,true,true
+	com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,<path to .project file>
+	fr.asi.designer.userlessbuild.WaitForBuildJob,<name of the project to build>
+	exit
