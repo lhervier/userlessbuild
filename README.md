@@ -37,3 +37,19 @@ Example command file :
 	com.ibm.designer.domino.tools.userlessbuild.jobs.ImportOnDiskProjectJob,<path to .project file>
 	fr.asi.designer.userlessbuild.WaitForBuildJob,<name of the project to build>
 	exit
+
+## Check for errors ##
+
+This job will check if there are some errors into a given project. It will work on java projects (your Library plugins for example), and on Domino projects.
+
+Note that the job will simply fail with an ERROR state. So will have to define "config,true,true" at the beginning of your command file to make it work.
+
+Example command file :
+
+	config,true,true
+	importandbuild,d:/Sources/mydatabase-ondisk/.project,mydatabase.nsf
+	wait,mydatabase.nsf,20
+	fr.asi.designer.userlessbuild.CheckErrorJob,mydatabase.nsf
+	exit
+
+This command file will fail with errors if mydatabase.nsf contains errors.
