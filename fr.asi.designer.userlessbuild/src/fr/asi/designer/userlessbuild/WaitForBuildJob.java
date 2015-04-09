@@ -33,7 +33,13 @@ public class WaitForBuildJob extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	@Override
-	protected IStatus run(IProgressMonitor arg0) {
+	protected IStatus run(IProgressMonitor monitor) {
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+		
 		IJobManager jobMan = Job.getJobManager();
 		Job[] build = jobMan.find(ResourcesPlugin.FAMILY_AUTO_BUILD); 
 		if( build.length == 1 )
