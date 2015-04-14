@@ -81,19 +81,7 @@ Where NOTES_ROOT is where you installed your notes client.
 
 ## Declaring the tasks in a build.xml file ##
 
-First, compile the fr.asi.designer.userlessbuild.anttasks project.
-
-You will have to :
-
-- Import the project into Domino Designer.
-- Add dependencies on all the jat files that comes with ant.
-- Add dependencies on notes.jar
-
-If Eclipse still complains on Notes APIs, go to the build properties, remove, and add the JVM.
-
-Then, right click the projet, and export into a jar file.
-
-Once you have the jar file, put it in the filesystem. For the example, i put it in a "lib" folder, next to my build.xml file. 
+Put the jar file in a "lib" folder, next to the build.xml file. 
 
 To include the tasks, just use a standard taskdef tag :
 
@@ -113,11 +101,13 @@ To include the tasks, just use a standard taskdef tag :
 ### runDesignerCommands ###
 
 This command will :
+
 - Launch Domino Designer in headless mode
 - Make it execute the commands you put inside the tag
 - It will then loop until Designer stop
 - While looping, it will check for the log files, and send their content to the console.
-- If an error is detected inside the log file, the task will fail.
+
+If an error is detected inside the log file, the task will fail.
 
 	<runDesignerCommands designerPath="C:\Notes\">
 		config,true,true
