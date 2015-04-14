@@ -4,7 +4,19 @@ This tool is used to add jobs to Headless Designer 9.0.1. Please, have a look at
 
 	http://www-10.lotus.com/ldd/ddwiki.nsf/dx/Headless_Designer_Wiki
 
-This tool can be installed into domino Designer using standard procedure :
+This tool can be installed into domino Designer using standard procedure. It also provides a set of ant tasks that allows you to automate the generation of your NSF files and update sites. 
+
+## Download update site and jar file ##
+
+A ready to install version of the update site is available at :
+
+<a href="https://www.dropbox.com/sh/fh3ambprjq8cfwt/AADE_r8meYTwky4jdqqe00zGa/fr.asi.designer.userlessbuild.site.zip?dl=0">Update Site for Designer plugins</a>
+
+And a ready to use version of the jar that contains the ant tasks is available at :
+
+<a href="https://www.dropbox.com/sh/fh3ambprjq8cfwt/AAAfD5XKZXRPvZ7ExHNDit_Da/userlessbuild-ant-tasks.jar?dl=0">Ant Tasks for Headless Designer</a>
+
+## Compile it yourself ##
 
 - Import projects into Designer (right click into package explorer / Import / Existing project into Workspace)
 - You will have to add dependencies on ant jars and on notes.jar to compile the project that contains the ant tasks. But event if it does not compile, you will be able to add the commands into your designer.
@@ -16,9 +28,7 @@ This tool can be installed into domino Designer using standard procedure :
 	- Add Folder Update Site that points to fr.asi.designer.userlessbuild.site
 - Accept licenses, and restart Designer
 
-This tool also comes with a set of ant tasks that can help you automate your scripts.
-
-# Additional jobs #
+# Additional Designer Commands #
 
 ## Compile update site ##
 
@@ -57,7 +67,7 @@ Example command file :
 
 This command file will fail with errors if mydatabase.nsf contains errors.
 
-# Ant tasks #
+# Additionnal Ant tasks #
 
 ## Running ant tasks ##
 
