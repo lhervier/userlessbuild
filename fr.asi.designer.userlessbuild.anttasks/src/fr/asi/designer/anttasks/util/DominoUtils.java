@@ -197,12 +197,14 @@ public class DominoUtils {
 	 * @param server the server to send the console command to
 	 * @param command the commande to send
 	 * @param password password of the local id file tused to connect to the server
+	 * @param failSafe true pour ne pas lever d'exception en cas d'erreur.
+	 * @throws ConsoleException en cas d'erreur d'envoi de la commande console.
 	 * @throws InterruptedException 
 	 */
 	public final static String sendConsole(
 			final String server, 
 			final String command, 
-			final String password) throws InterruptedException {
+			final String password) throws ConsoleException, InterruptedException {
 		final StringHolder result = new StringHolder();
 		Runnable r = new Runnable() {
 			public void run() {
@@ -221,7 +223,11 @@ public class DominoUtils {
 				}
 			}
 		};
-		DominoUtils.runInNotesThread(r);
+		try {
+			DominoUtils.runInNotesThread(r);
+		} catch(Throwable ex) {
+			throw new ConsoleException(ex);
+		}
 		return result.s;
 	}
 	

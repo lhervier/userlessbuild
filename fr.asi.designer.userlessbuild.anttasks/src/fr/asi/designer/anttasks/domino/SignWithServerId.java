@@ -13,6 +13,7 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
 import fr.asi.designer.anttasks.util.BooleanHolder;
+import fr.asi.designer.anttasks.util.ConsoleException;
 import fr.asi.designer.anttasks.util.DominoUtils;
 import fr.asi.designer.anttasks.util.StringHolder;
 
@@ -157,6 +158,8 @@ public class SignWithServerId extends Task {
 			}
 			if( !ok.b )
 				throw new BuildException("Adminp request was NOT processed... Please, check admin4.nsf.");
+		} catch (ConsoleException e) {
+			throw new BuildException(e, this.getLocation());
 		} catch (InterruptedException e) {
 			throw new BuildException(e, this.getLocation());
 		} finally {

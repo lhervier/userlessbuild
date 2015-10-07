@@ -8,6 +8,7 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
+import fr.asi.designer.anttasks.util.ConsoleException;
 import fr.asi.designer.anttasks.util.DominoUtils;
 
 /**
@@ -89,6 +90,8 @@ public class RefreshDesign extends Task {
 			if( timeout == 200 )
 				throw new RuntimeException("Unable to detect the end of the designer domino task");
 			this.log("Designer task stopped", Project.MSG_INFO);
+		} catch (ConsoleException e) {
+			throw new BuildException(e, this.getLocation());
 		} catch (InterruptedException e) {
 			throw new BuildException(e, this.getLocation());
 		} catch (IOException e) {

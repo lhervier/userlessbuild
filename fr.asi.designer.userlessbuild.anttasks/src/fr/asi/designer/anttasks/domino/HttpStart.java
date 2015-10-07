@@ -7,6 +7,7 @@ import java.io.StringReader;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
+import fr.asi.designer.anttasks.util.ConsoleException;
 import fr.asi.designer.anttasks.util.DominoUtils;
 
 /**
@@ -26,6 +27,11 @@ public class HttpStart extends Task {
 	private String password;
 
 	/**
+	 * En cas d'erreur, on continue
+	 */
+	private boolean failSafe;
+	
+	/**
 	 * @param server the server to set
 	 */
 	public void setServer(String server) {
@@ -39,6 +45,13 @@ public class HttpStart extends Task {
 		this.password = password;
 	}
 	
+	/**
+	 * @param failSafe the failSafe to set
+	 */
+	public void setFailSafe(boolean failSafe) {
+		this.failSafe = failSafe;
+	}
+
 	/**
 	 * Execution
 	 */
@@ -74,6 +87,12 @@ public class HttpStart extends Task {
 			if( timeout == 200 )
 				throw new RuntimeException("Unable to start http task...");
 			this.log("HTTP Task started", Project.MSG_INFO);
+		} catch( ConsoleException e) {
+			this.log(e, Project.MSG_ERR);
+			if( this.failSafe )
+				return;
+			else
+				throw new RuntimeException(e);
 		} catch (InterruptedException e) {
 			this.log(e, Project.MSG_ERR);
 			throw new RuntimeException(e);
