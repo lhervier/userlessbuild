@@ -7,6 +7,7 @@ import java.io.StringReader;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 
+import fr.asi.designer.anttasks.util.ConsoleException;
 import fr.asi.designer.anttasks.util.DominoUtils;
 
 /**
@@ -26,6 +27,11 @@ public class HttpStop extends Task {
 	private String password;
 	
 	/**
+	 * Ne pas terminer en erreur si la commande console ne passe pas
+	 */
+	private boolean failSafe;
+	
+	/**
 	 * @param server the server to set
 	 */
 	public void setServer(String server) {
@@ -37,6 +43,13 @@ public class HttpStop extends Task {
 	 */
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	/**
+	 * @param failSafe the failSafe to set
+	 */
+	public void setFailSafe(boolean failSafe) {
+		this.failSafe = failSafe;
 	}
 
 	/**
@@ -71,6 +84,12 @@ public class HttpStop extends Task {
 			if( timeout == 200 )
 				throw new RuntimeException("Unable to detect http task shutdown");
 			this.log("HTTP Task stopped", Project.MSG_INFO);
+		} catch (ConsoleException e) {
+			this.log(e, Project.MSG_ERR);
+			if( this.failSafe )
+				return;
+			else
+				throw new RuntimeException(e);
 		} catch (InterruptedException e) {
 			this.log(e, Project.MSG_ERR);
 			throw new RuntimeException(e);
