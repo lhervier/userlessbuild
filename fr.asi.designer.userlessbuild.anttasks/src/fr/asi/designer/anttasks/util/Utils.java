@@ -15,6 +15,19 @@ import java.io.Writer;
 public class Utils {
 	
 	/**
+	 * To detect if a string is empty
+	 * @param s the string to test
+	 * @return true if the string is empty ("" or null)
+	 */
+	public final static boolean isEmpty(String s) {
+		if( s == null )
+			return true;
+		if( s.length() == 0 )
+			return true;
+		return false;
+	}
+	
+	/**
 	 * Read the content of a file
 	 * Content must be encoded using UTF-8
 	 * @param f the file to read

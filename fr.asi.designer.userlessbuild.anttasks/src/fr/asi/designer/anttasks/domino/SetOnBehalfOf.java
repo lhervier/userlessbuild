@@ -8,7 +8,6 @@ import lotus.domino.NotesFactory;
 import lotus.domino.Session;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
 import fr.asi.designer.anttasks.util.DominoUtils;
 
@@ -16,18 +15,8 @@ import fr.asi.designer.anttasks.util.DominoUtils;
  * Ant task to declare that an agent must run on behalf of someone
  * @author Lionel HERVIER
  */
-public class SetOnBehalfOf extends Task {
+public class SetOnBehalfOf extends BaseDatabaseSetTask {
 
-	/**
-	 * Server
-	 */
-	private String server;
-	
-	/**
-	 * Database
-	 */
-	private String database;
-	
 	/**
 	 * Agent
 	 */
@@ -38,25 +27,6 @@ public class SetOnBehalfOf extends Task {
 	 */
 	private String onBehalfOf;
 	
-	/**
-	 * Password of the local ID file
-	 */
-	private String password;
-
-	/**
-	 * @param server the server to set
-	 */
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	/**
-	 * @param database the database to set
-	 */
-	public void setDatabase(String database) {
-		this.database = database;
-	}
-
 	/**
 	 * @param agent the agent to set
 	 */
@@ -72,35 +42,28 @@ public class SetOnBehalfOf extends Task {
 	}
 
 	/**
-	 * @param password the password to set
+	 * @see fr.asi.designer.anttasks.domino.BaseDatabaseSetTask#execute(java.lang.String)
 	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	/**
-	 * Execution
-	 */
-	public void execute() throws BuildException {
+	@Override
+	public void execute(final String dbPath) throws BuildException {
 		try {
-			this.log(this.server + "!!" + this.database + "/" + this.agent + " will be set to run on behalf of '" + this.onBehalfOf + "'");
-	
+			this.log(this.getServer() + "!!" + dbPath + "/" + this.agent + " will be set to run on behalf of '" + this.onBehalfOf + "'");
 			Runnable r = new Runnable() {
 				public void run() {
 					try {
 						Session session = NotesFactory.createSession(
 								(String) null, 
 								(String) null, 
-								(String) SetOnBehalfOf.this.password
+								(String) SetOnBehalfOf.this.getPassword()
 						);
 						
 						// Ouvre la base
-						Database db = session.getDatabase(SetOnBehalfOf.this.server, SetOnBehalfOf.this.database, false);
+						Database db = session.getDatabase(SetOnBehalfOf.this.getServer(), dbPath, false);
 						if( db == null )
-							throw new RuntimeException("Database '" + SetOnBehalfOf.this.server + "!!" + SetOnBehalfOf.this.database + "' does not exists");
+							throw new RuntimeException("Database '" + SetOnBehalfOf.this.getServer() + "!!" + dbPath + "' does not exists");
 						if( !db.isOpen() )
 							if( !db.open() )
-								throw new RuntimeException("Unable to open database '" + SetOnBehalfOf.this.server + "!!" + SetOnBehalfOf.this.database + "'");
+								throw new RuntimeException("Unable to open database '" + SetOnBehalfOf.this.getServer() + "!!" + dbPath + "'");
 						
 						// Créé la collection
 						NoteCollection coll = db.createNoteCollection(false);

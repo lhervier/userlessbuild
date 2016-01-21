@@ -6,65 +6,52 @@ import java.io.StringReader;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 
 import fr.asi.designer.anttasks.util.DominoUtils;
+import fr.asi.designer.anttasks.util.Utils;
 
 /**
- * Ant task to launch a refresh design of the given database.
+ * Ant task to launch a refresh design of a set of databases.
+ * 
  * Design refresh is done via a console command that load the "design" task
  * with parameters.
  * @author Lionel HERVIER
  */
-public class RefreshDesign extends Task {
+public class RefreshDesign extends BaseDatabaseSetTask {
 
 	/**
-	 * The server
+	 * Dry run ?
 	 */
-	private String server;
+	private boolean dryRun = false;
 	
 	/**
-	 * The database
+	 * @param dryRun the dryRun to set
 	 */
-	private String database;
-	
-	/**
-	 * The password of the local ID file
-	 */
-	private String password;
-
-	/**
-	 * @param server the server to set
-	 */
-	public void setServer(String server) {
-		this.server = server;
+	public void setDryRun(boolean dryRun) {
+		this.dryRun = dryRun;
 	}
 
 	/**
-	 * @param database the database to set
+	 * @see fr.asi.designer.anttasks.domino.BaseDatabaseSetTask#execute(java.lang.String)
 	 */
-	public void setDatabase(String database) {
-		this.database = database;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	/**
-	 * Execution
-	 */
-	public void execute() throws BuildException {
+	@Override
+	public void execute(final String dbPath) throws BuildException {
 		try {
-			this.log("Refreshing design of '" + this.server + "!!" + this.database + "'", Project.MSG_INFO);
+			String cmd = "load design";
+			if( !Utils.isEmpty(dbPath) ) { 
+				this.log("Refreshing design of '" + this.getServer() + "!!" + dbPath + "'", Project.MSG_INFO);
+				cmd += " -f " + dbPath;
+			} else {
+				this.log("Refreshing design of all databases on server '" + this.getServer() + "'", Project.MSG_INFO);
+			}
+			
+			if( this.dryRun )
+				return;
 			
 			DominoUtils.sendConsole(
-					this.server, 
-					"load design -f " + this.database, 
-					this.password
+					this.getServer(), 
+					cmd, 
+					this.getPassword()
 			);
 			
 			boolean ok = false;
@@ -74,7 +61,7 @@ public class RefreshDesign extends Task {
 					this.log("Waiting for Designer task to shutdown", Project.MSG_INFO);
 				Thread.sleep(1000);
 				
-				String tasks = DominoUtils.sendConsole(this.server, "show task", this.password);
+				String tasks = DominoUtils.sendConsole(this.getServer(), "show task", this.getPassword());
 				StringReader reader = new StringReader(tasks);
 				BufferedReader breader = new BufferedReader(reader);
 				String line = breader.readLine();
