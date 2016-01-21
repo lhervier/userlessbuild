@@ -154,6 +154,44 @@ This task will change the name of the template that a given database is declarin
 
 These tasks are using the standard notes apis. They will open sessions to the Notes server using the local Notes client. For this, you will have to give them the password of the local ID file.
 
+### DatabaseSet ###
+
+Some tasks supports a nested <databaseSet> tag which allows the task to run on multiple databases. On these tasks, you can also define the following properties :
+
+- server: the server to find the database
+- password: Password of the local ID file to access to the database
+- database: A database to run on. This is a shortcut when processing only one database.
+
+Launch a task on a single database :
+ 
+	<atask server="SERVER/ASI" password="mypassword" database="db.nsf"/>
+
+Same a previous task :
+
+	<atask server="SERVER/ASI" password="mypassword">
+		<databaseSet database="mydb.nsf"/>
+	</atask>
+
+Run on multiple databases :
+
+	<atask server="SERVER/ASI" password="mypassword">
+		<databaseSet database="mydb1.nsf"/>
+		<databaseSet database="mydb2.nsf"/>
+	</atask>
+ 
+Run on all databases that inherits from template "tmpl" :
+
+	<atask server="SERVER/ASI" password="mypassword">
+		<databaseSet template="tmpl"/>
+	</atask>
+
+Run on db1, db2 and on all database that inherits from tmpl :
+	
+	<atask server="SERVER/ASI" password="mypassword" database="db1.nsf">
+		<databaseSet database="db2.nsf"/>
+		<databaseSet template="tmpl"/>
+	</atask>
+
 ### httpStop ###
 
 Will stop the http task. Password is the password of your local ID file.
@@ -207,11 +245,23 @@ This task will refresh the design of the given database. The refresh is done via
 
 	<refreshDesign server="SERVER/ASI" database="mydb.nsf" password="mypassword"/>
 
+This task also support nested <databaseSet> tags.
+
+	<refreshDesign server="SERVER/ASI" password="mypassword">
+		<databaseSet template="tmpl"/>
+	</refreshDesign>
+
 ### setOnBehalfOf ###
 
 This task will make an agent run "on behalf of" a given user.
 
 	<setOnBehalfOf server="SERVER/ASI" database="mydb.nsf" agent="myagent" onBehalfOf="CN=Lionel HERVIER/O=ASI" password="mypassword"/>
+
+This task also support nested <databaseSet> tags.
+
+	<setOnBehalfOf server="SERVER/ASI" agent="myagent" onBehalfOf="CN=Lionel HERVIER/O=ASI" password="mypassword">
+		<databaseSet template="tmpl"/>
+	</setOnBehalfOf>
 
 ### enableAgent ###
 
@@ -221,3 +271,8 @@ This task will allows you to enable an agent
 
 The "serverToRun" is the name of the server the agent will be activated on.
 
+This task also support nested <databaseSet> tags.
+
+	<enableAgent server="SERVER/ASI" agent="myagent" serverToRun="SERVER2/ASI" password="mypassword">
+		<databaseSet template="tmpl"/>
+	</enableAgent>
