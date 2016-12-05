@@ -3,8 +3,6 @@ package fr.asi.designer.anttasks.domino;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
-import org.apache.tools.ant.Project;
-
 /**
  * Send a command on a domino server
  * 
