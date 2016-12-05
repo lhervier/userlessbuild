@@ -1,18 +1,16 @@
 package fr.asi.designer.anttasks.domino;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
+import lotus.domino.NotesException;
+import lotus.domino.Session;
 
-import fr.asi.designer.anttasks.util.ConsoleException;
-import fr.asi.designer.anttasks.util.DominoUtils;
+import org.apache.tools.ant.Project;
 
 /**
  * Send a command on a domino server
  * 
  * @author Lionel HERVIER & Philippe ARDIT
  */
-public class DatabaseReplicate extends Task {
+public class DatabaseReplicate extends BaseNotesTask {
 
 	/**
 	 * The source server
@@ -28,11 +26,6 @@ public class DatabaseReplicate extends Task {
 	 * The destination server(s separated by semi-columns)
 	 */
 	private String destServer;
-	
-	/**
-	 * Password of the local Id file
-	 */
-	private String password;
 	
 	/**
 	 * @param srcServer the srcServer to set
@@ -56,29 +49,19 @@ public class DatabaseReplicate extends Task {
 	}
 
 	/**
-	 * @param password the password to set
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
 	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
-	 * Execution
-	 */
-	public void execute() throws BuildException {
-		try {
-			String[] tabServers = this.destServer.split(";");
-			for (int i = 0; i < tabServers.length; i++) {
-				this.log("Replicating database '" + this.srcServer + "!!" + this.srcDatabase + "' to '" + tabServers[i] + "'");
-				DominoUtils.sendConsole(this.srcServer, "Replicate " + tabServers[i] + " " + this.srcDatabase, this.password);
-			}
-			this.log("Replication command launched... please check manually", Project.MSG_INFO);
-		} catch( ConsoleException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
+	@Override
+	public void execute(Session session) throws NotesException {
+		String[] tabServers = this.destServer.split(";");
+		for( int i = 0; i < tabServers.length; i++ ) {
+			this.log("Replicating database '" + this.srcServer + "!!" + this.srcDatabase + "' to '" + tabServers[i] + "'");
+			
+			SendConsole task = this.delegate(SendConsole.class);
+			task.setServer(this.srcServer);
+			task.setCommand("Replicate " + tabServers[i] + " " + this.srcDatabase);
+			task.execute();
 		}
+		this.log("Replication command launched... please check manually", Project.MSG_INFO);
 	}
 }
