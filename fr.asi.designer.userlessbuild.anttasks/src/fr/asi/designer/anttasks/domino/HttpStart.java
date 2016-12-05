@@ -1,31 +1,22 @@
 package fr.asi.designer.anttasks.domino;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import lotus.domino.Session;
 
+import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
 
-import fr.asi.designer.anttasks.util.ConsoleException;
-import fr.asi.designer.anttasks.util.DominoUtils;
 
 /**
  * Starts an http task on a domino server
  * @author Lionel HERVIER
  */
-public class HttpStart extends Task {
+public class HttpStart extends BaseNotesTask {
 
 	/**
 	 * The server
 	 */
 	private String server;
 	
-	/**
-	 * Password of the local id file
-	 */
-	private String password;
-
 	/**
 	 * En cas d'erreur, on continue
 	 */
@@ -39,66 +30,24 @@ public class HttpStart extends Task {
 	}
 
 	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	/**
 	 * @param failSafe the failSafe to set
 	 */
 	public void setFailSafe(boolean failSafe) {
 		this.failSafe = failSafe;
 	}
 
-	/**
-	 * Execution
-	 */
-	public void execute() {
+	public void execute(Session session) {
+		this.log("Starting HTTP Task on server '" + this.server + "'", Project.MSG_INFO);
+		SendConsole task = this.delegate(SendConsole.class);
+		task.setServer(this.server);
+		task.setCommand("load http");
+		task.setTaskStartedMessage("HTTP Server[ ]*Listen for connect requests on TCP Port:");
 		try {
-			this.log("Starting HTTP Task on server '" + this.server + "'", Project.MSG_INFO);
-			
-			DominoUtils.sendConsole(
-					this.server, 
-					"load http", 
-					this.password
-			);
-			
-			boolean ok = false;
-			int timeout = 0;
-			while( !ok && timeout < 200 ) {
-				if( timeout % 5 == 0 )
-					this.log("Waiting for http task to start", Project.MSG_INFO);
-				Thread.sleep(1000);
-				
-				String tasks = DominoUtils.sendConsole(this.server, "show task", this.password);
-				StringReader reader = new StringReader(tasks);
-				BufferedReader breader = new BufferedReader(reader);
-				String line = breader.readLine();
-				while( !ok && line != null ) {
-					if( line.indexOf("HTTP Server") != -1 && line.indexOf("Listen for connect requests on TCP Port:") != -1 )
-						ok = true;
-					else
-						line = breader.readLine();
-				}
-				timeout++;
-			}
-			if( timeout == 200 )
-				throw new RuntimeException("Unable to start http task...");
-			this.log("HTTP Task started", Project.MSG_INFO);
-		} catch( ConsoleException e) {
-			this.log(e, Project.MSG_ERR);
+			task.execute();
+		} catch(BuildException e) {
 			if( this.failSafe )
 				return;
-			else
-				throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
+			throw e;
 		}
 	}
 }
