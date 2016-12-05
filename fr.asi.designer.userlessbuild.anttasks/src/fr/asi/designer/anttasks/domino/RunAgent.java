@@ -7,13 +7,11 @@ import lotus.domino.Agent;
 import lotus.domino.Database;
 import lotus.domino.Document;
 import lotus.domino.NotesException;
-import lotus.domino.NotesFactory;
 import lotus.domino.Session;
 
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
 
-import fr.asi.designer.anttasks.util.DominoUtils;
+import fr.asi.designer.anttasks.util.Utils;
 
 /**
  * Ant task to launch an agent. This task can contain
@@ -21,7 +19,7 @@ import fr.asi.designer.anttasks.util.DominoUtils;
  * document context.
  * @author Lionel HERVIER
  */
-public class RunAgent extends Task {
+public class RunAgent extends BaseNotesTask {
 
 	/**
 	 * Server
@@ -39,14 +37,48 @@ public class RunAgent extends Task {
 	private String agent;
 	
 	/**
-	 * Password of the local Id file
-	 */
-	private String password;
-
-	/**
 	 * The fields to add
 	 */
 	private List<ContextDocField> contextDocFields = new ArrayList<ContextDocField>();
+	
+	/**
+	 * @return an empty context doc field object
+	 */
+	public ContextDocField createContextDocField() {
+		ContextDocField ret = new ContextDocField();
+		this.contextDocFields.add(ret);
+		return ret;
+	}
+	
+	/**
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
+	 */
+	@Override
+	public void execute(Session session) throws NotesException {
+		this.log("Running agent '" + this.agent + "' in database '" + this.server + "!!" + this.database + "'");
+		Database src = null;
+		Document doc = null;
+		try {
+			src = this.openDatabase(this.server, this.database);
+			Agent ag = src.getAgent(this.agent);
+			if( ag == null )
+				throw new BuildException("Unable to find agent '" + RunAgent.this.agent + " in database");
+			
+			doc = src.createDocument();
+			doc.replaceItemValue("Form", "RunAgent");
+			for( ContextDocField field : this.contextDocFields )
+				doc.replaceItemValue(field.getName(), field.getValue());
+			doc.save(true, false);
+			
+			ag.run(doc.getNoteID());
+		} finally {
+			doc.remove(true);
+			Utils.recycleQuietly(doc);
+			Utils.recycleQuietly(src);
+		}
+	}
+	
+	// ===================================================================
 	
 	/**
 	 * @param server the server to set
@@ -67,74 +99,6 @@ public class RunAgent extends Task {
 	 */
 	public void setAgent(String agent) {
 		this.agent = agent;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	/**
-	 * @return an empty context doc field object
-	 */
-	public ContextDocField createContextDocField() {
-		ContextDocField ret = new ContextDocField();
-		this.contextDocFields.add(ret);
-		return ret;
-	}
-	
-	/**
-	 * Execution
-	 */
-	public void execute() throws BuildException {
-		try {
-			this.log("Running agent '" + this.agent + "' in database '" + this.server + "!!" + this.database + "'");
-			
-			Runnable r = new Runnable() {
-				public void run() {
-					try {
-						Session session = NotesFactory.createSession(
-								(String) null, 
-								(String) null, 
-								(String) RunAgent.this.password
-						);
-						Database src = session.getDatabase(RunAgent.this.server, RunAgent.this.database, false);
-						if( src == null )
-							throw new RuntimeException("Database '" + RunAgent.this.server + "!!" + RunAgent.this.database + "' does not exists");
-						if( !src.isOpen() )
-							if( !src.open() )
-								throw new RuntimeException("Unable to open database '" + RunAgent.this.server + "!!" + RunAgent.this.database + "'");
-						
-						Agent ag = src.getAgent(agent);
-						if( ag == null )
-							throw new RuntimeException("Unable to find agent '" + RunAgent.this.agent + " in database");
-						
-						Document doc = src.createDocument();
-						try {
-							doc.replaceItemValue("Form", "RunAgent");
-							for( ContextDocField field : RunAgent.this.contextDocFields )
-								doc.replaceItemValue(field.getName(), field.getValue());
-							
-							doc.save(true, false);
-							String noteId = doc.getNoteID();
-							
-							ag.run(noteId);
-						} finally {
-							doc.remove(true);
-						}
-					} catch(NotesException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			};
-			DominoUtils.runInNotesThread(r);
-		} catch (InterruptedException e) {
-			throw new BuildException(e, this.getLocation());
-		} finally {
-			
-		}
 	}
 	
 }
