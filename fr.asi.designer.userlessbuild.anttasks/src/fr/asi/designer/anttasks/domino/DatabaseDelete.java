@@ -1,15 +1,15 @@
 package fr.asi.designer.anttasks.domino;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
-
-import fr.asi.designer.anttasks.util.DominoUtils;
+import lotus.domino.Database;
+import lotus.domino.NotesException;
+import lotus.domino.Session;
+import fr.asi.designer.anttasks.util.Utils;
 
 /**
  * Ant task to remove a database
  * @author Lionel HERVIER
  */
-public class DatabaseDelete extends Task {
+public class DatabaseDelete extends BaseNotesTask {
 
 	/**
 	 * Server where to find the database
@@ -22,10 +22,32 @@ public class DatabaseDelete extends Task {
 	private String database;
 	
 	/**
-	 * Password of the local id file
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
 	 */
-	private String password;
-
+	@Override
+	public void execute(Session session) throws NotesException {
+		this.log("Removing database " + this.server + "!!" + this.database);
+		Database db = null;
+		try {
+			db = session.getDatabase(
+					this.server, 
+					this.database, 
+					false
+			);
+			if( db == null )
+				return;
+			try {
+				db.remove();
+			} catch(NotesException e) {
+				// May happen...
+			}
+		} finally {
+			Utils.recycleQuietly(db);
+		}
+	}
+	
+	// =========================================================================
+	
 	/**
 	 * @param server the server to set
 	 */
@@ -39,24 +61,5 @@ public class DatabaseDelete extends Task {
 	public void setDatabase(String database) {
 		this.database = database;
 	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
 	
-	/**
-	 * Execution
-	 */
-	public void execute() {
-		this.log("Removing database " + this.server + "!!" + this.database);
-		try {
-			DominoUtils.deleteDatabase(this.server, this.database, this.password);
-		} catch (InterruptedException e) {
-			this.log(e, Project.MSG_INFO);
-			throw new RuntimeException(e);
-		}
-	}
 }

@@ -12,6 +12,9 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
+import lotus.domino.Base;
+import lotus.domino.NotesException;
+
 public class Utils {
 	
 	/**
@@ -135,5 +138,17 @@ public class Utils {
 		return f;
 	}
 
-	
+	/**
+	 * Recycle a notes object
+	 * @param o the object to recycle
+	 */
+	public static final void recycleQuietly(Base o) {
+		if( o == null )
+			return;
+		try {
+			o.recycle();
+		} catch(NotesException e) {
+			throw new RuntimeException(e);
+		}
+	}
 }
