@@ -1,20 +1,16 @@
 package fr.asi.designer.anttasks.domino;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
+import lotus.domino.NotesException;
+import lotus.domino.Session;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
+import org.apache.tools.ant.BuildException;
 
-import fr.asi.designer.anttasks.util.ConsoleException;
-import fr.asi.designer.anttasks.util.DominoUtils;
 
 /**
  * Ant task to stop an http task
  * @author Lionel HERVIER
  */
-public class HttpStop extends Task {
+public class HttpStop extends BaseNotesTask {
 
 	/**
 	 * The server to send the command to
@@ -22,14 +18,32 @@ public class HttpStop extends Task {
 	private String server;
 	
 	/**
-	 * The password of the local id file
-	 */
-	private String password;
-	
-	/**
 	 * Ne pas terminer en erreur si la commande console ne passe pas
 	 */
 	private boolean failSafe;
+	
+	/**
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
+	 */
+	@Override
+	public void execute(Session session) throws NotesException {
+		this.log("Stopping HTTP task on server " + this.server);
+		
+		SendConsole task = this.delegate(SendConsole.class);
+		task.setServer(this.server);
+		task.setCommand("tell http quit");
+		task.setTaskRunningMessage("HTTP Server");
+		
+		try {
+			task.execute();
+		} catch(BuildException e) {
+			if( this.failSafe )
+				return;
+			throw e;
+		}
+	}
+	
+	// =======================================================================
 	
 	/**
 	 * @param server the server to set
@@ -39,63 +53,9 @@ public class HttpStop extends Task {
 	}
 
 	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @param failSafe the failSafe to set
 	 */
 	public void setFailSafe(boolean failSafe) {
 		this.failSafe = failSafe;
-	}
-
-	/**
-	 * Execution
-	 */
-	public void execute() {
-		try {
-			this.log("Stopping HTTP task on server " + this.server);
-			
-			DominoUtils.sendConsole(this.server, "tell http quit", this.password);
-			
-			boolean ok = false;
-			int timeout = 0;
-			while( !ok && timeout < 200 ) {
-				if( timeout % 5 == 0 )
-					this.log("httpStop : Waiting for http task to shutdown", Project.MSG_INFO);
-				Thread.sleep(1000);
-				
-				String tasks = DominoUtils.sendConsole(this.server, "show task", this.password);
-				StringReader reader = new StringReader(tasks);
-				BufferedReader breader = new BufferedReader(reader);
-				String line = breader.readLine();
-				ok = true;
-				while( ok && line != null ) {
-					if( line.indexOf("HTTP Server") != -1 )
-						ok = false;
-					else
-						line = breader.readLine();
-				}
-				timeout++;
-			}
-			if( timeout == 200 )
-				throw new RuntimeException("Unable to detect http task shutdown");
-			this.log("HTTP Task stopped", Project.MSG_INFO);
-		} catch (ConsoleException e) {
-			this.log(e, Project.MSG_ERR);
-			if( this.failSafe )
-				return;
-			else
-				throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
-		}
 	}
 }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-httpStop" basedir="." default="test">
+	<taskdef resource="userlessbuild-ant-tasks.properties"/>
+	<target name="test">
+		<httpStop server="HLINK/HERMES" failSafe="true"/>
+	</target>
+</project>
