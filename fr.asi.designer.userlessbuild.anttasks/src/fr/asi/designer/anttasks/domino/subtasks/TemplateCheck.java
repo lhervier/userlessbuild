@@ -48,7 +48,6 @@ public class TemplateCheck extends BaseNotesTask {
 			String title = icon.getItemValueString("$Title");
 			
 			int pos = title.indexOf("\n#1");
-			System.out.println(title + " : " + pos);
 			if( pos == -1 )
 				throw new BuildException("Not a template...");
 		} finally {
