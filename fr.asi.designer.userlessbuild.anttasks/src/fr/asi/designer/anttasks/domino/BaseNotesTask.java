@@ -2,6 +2,7 @@ package fr.asi.designer.anttasks.domino;
 
 import java.lang.Thread.UncaughtExceptionHandler;
 
+import lotus.domino.Database;
 import lotus.domino.NotesException;
 import lotus.domino.NotesFactory;
 import lotus.domino.NotesThread;
@@ -26,10 +27,15 @@ public abstract class BaseNotesTask extends Task {
 	private String password;
 	
 	/**
+	 * The notes session
+	 */
+	private Session session;
+	
+	/**
 	 * Execution
 	 * @throws NotesException in cas of trouble...
 	 */
-	public abstract void execute(Session session) throws NotesException;
+	protected abstract void execute(Session session) throws NotesException;
 	
 	/**
 	 * Execution
@@ -43,18 +49,17 @@ public abstract class BaseNotesTask extends Task {
 		};
 		Thread t = new NotesThread() {
 			public void runNotes() {
-				Session session = null;
 				try {
-					session = NotesFactory.createSession(
+					BaseNotesTask.this.session = NotesFactory.createSession(
 							(String) null, 
 							(String) null, 
 							(String) BaseNotesTask.this.password
 					);
-					BaseNotesTask.this.execute(session);
+					BaseNotesTask.this.execute(BaseNotesTask.this.session);
 				} catch(NotesException e) {
 					throw new BuildException(e);
 				} finally {
-					Utils.recycleQuietly(session);
+					Utils.recycleQuietly(BaseNotesTask.this.session);
 				}
 			}
 		};
@@ -70,6 +75,52 @@ public abstract class BaseNotesTask extends Task {
 		}
 	}
 	
+	/**
+	 * Returns an opened database object using the current session
+	 * @param server the server name
+	 * @param database the database name
+	 * @return the database
+	 * @throws BuildException if the database cannot be opened
+	 * @throws NotesException in case of trouble...
+	 */
+	public Database openDatabase(String server, String database) throws BuildException, NotesException {
+		Database ret = this.session.getDatabase(
+				server, 
+				database, 
+				false
+		);
+		if( ret == null )
+			throw new BuildException("Database '" + server + "!!" + database + "' doest not exists");
+		if( !ret.isOpen() )
+			if( !ret.open() )
+				throw new BuildException("Unable to open database '" + server + "!!" + database + "'");
+		return ret;
+	}
+	
+	/**
+	 * Returns a delegated task
+	 * @param cl the class of the object to return
+	 * @return the delegated task
+	 */
+	public <T extends BaseNotesTask> T delegate(Class<T> cl) {
+		T ret;
+		try {
+			ret = cl.newInstance();
+		} catch (IllegalAccessException e) {
+			throw new BuildException(e);
+		} catch (InstantiationException e) {
+			throw new BuildException(e);
+		}
+		ret.setLocation(this.getLocation());
+		ret.setOwningTarget(this.getOwningTarget());
+		ret.setPassword(this.password);
+		ret.setProject(this.getProject());
+		ret.setRuntimeConfigurableWrapper(this.getRuntimeConfigurableWrapper());
+		ret.setTaskName(this.getTaskName());
+		ret.setTaskType(this.getTaskType());
+		return ret;
+	}
+	
 	// ========================= GETTERS AND SETTERS ======================================
 	
 	/**
@@ -77,12 +128,5 @@ public abstract class BaseNotesTask extends Task {
 	 */
 	public void setPassword(String password) {
 		this.password = password;
-	}
-
-	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
 	}
 }

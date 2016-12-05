@@ -1,15 +1,15 @@
 package fr.asi.designer.anttasks.domino;
 
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
-import fr.asi.designer.anttasks.util.DominoUtils;
+import lotus.domino.NotesException;
+import lotus.domino.Session;
+import fr.asi.designer.anttasks.domino.subtasks.CopyAllDocuments;
+import fr.asi.designer.anttasks.domino.subtasks.TemplateCheck;
 
 /**
- * Ant task to copy a domino database
+ * Ant task to copy a domino database. This task delegates to multiple other tasks.
  * @author Lionel HERVIER
  */
-public class DatabaseCopy extends Task {
+public class DatabaseCopy extends BaseNotesTask {
 
 	/**
 	 * The source server
@@ -36,19 +36,47 @@ public class DatabaseCopy extends Task {
 	 * destination database defines this template name. 
 	 */
 	private String templateCheck;
-
-	/**
-	 * Password of the local Id file
-	 */
-	private String password;
 	
 	/**
-	 * @param password the password to set
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
 	 */
-	public void setPassword(String password) {
-		this.password = password;
+	@Override
+	public void execute(Session session) throws NotesException {
+		this.log(Thread.currentThread().toString());
+		
+		// Remove destination database
+		DatabaseDelete deleteTask = this.delegate(DatabaseDelete.class);
+		deleteTask.setServer(this.destServer);
+		deleteTask.setDatabase(this.destDatabase);
+		deleteTask.execute();
+		
+		// Copy source to destination
+		fr.asi.designer.anttasks.domino.subtasks.DatabaseCopy copyTask = this.delegate(fr.asi.designer.anttasks.domino.subtasks.DatabaseCopy.class);
+		copyTask.setSrcServer(this.srcServer);
+		copyTask.setSrcDatabase(this.srcDatabase);
+		copyTask.setDestServer(this.destServer);
+		copyTask.setDestDatabase(this.destDatabase);
+		copyTask.execute();
+		
+		// Copy all documents
+		CopyAllDocuments copyDocsTask = this.delegate(CopyAllDocuments.class);
+		copyDocsTask.setSrcServer(this.srcServer);
+		copyDocsTask.setSrcDatabase(this.srcDatabase);
+		copyDocsTask.setDestServer(this.destServer);
+		copyDocsTask.setDestDatabase(this.destDatabase);
+		copyDocsTask.execute();
+		
+		// Check if destination database is a template
+		if( this.templateCheck != null && this.templateCheck.length() != 0 ) {
+			TemplateCheck tmplCheckTask = this.delegate(TemplateCheck.class);
+			tmplCheckTask.setServer(this.destServer);
+			tmplCheckTask.setDatabase(this.destDatabase);
+			tmplCheckTask.execute();
+		}
 	}
-
+	
+	// ==================================================================================================
+	
 	/**
 	 * @param srcServer the srcServer to set
 	 */
@@ -82,35 +110,5 @@ public class DatabaseCopy extends Task {
 	 */
 	public void setTemplateCheck(String templateCheck) {
 		this.templateCheck = templateCheck;
-	}
-	
-	/**
-	 * Execution
-	 */
-	public void execute() throws BuildException {
-		this.log("Copying database '" + this.srcServer + "!!" + this.srcDatabase + "' to '" + this.destServer + "!!" + this.destDatabase + "'");
-		try {
-			DominoUtils.deleteDatabase(
-					this.destServer, 
-					this.destDatabase, 
-					this.password
-			);
-			
-			DominoUtils.copyDatabase(
-					this.srcServer, 
-					this.srcDatabase, 
-					this.destServer, 
-					this.destDatabase, 
-					this.password
-			);
-			
-			if( this.templateCheck != null && this.templateCheck.length() != 0 ) {
-				String mt = DominoUtils.getMasterTemplateName(this.destServer, this.destDatabase, this.password);
-				if( mt == null )
-					throw new BuildException("Unable to copy database to '" + this.srcServer + "!!" + this.srcDatabase + "'. Another template is already declared as '" + this.templateCheck + "'", this.getLocation());
-			}
-		} catch (InterruptedException e) {
-			throw new BuildException(e, this.getLocation());
-		}
 	}
 }
