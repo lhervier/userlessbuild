@@ -3,6 +3,8 @@
 	<taskdef resource="userlessbuild-ant-tasks.properties"/>
 	<target name="test">
 		<sendConsole server="HLINK/HERMES" command="show tasks"/>
-		<sendConsole server="HLINK/HERMES" command="load design -f names.nsf" commandName="Designer"/>
+		<sendConsole server="HLINK/HERMES" command="load design -f names.nsf" taskRunningMessage="Designer"/>
+		<sendConsole server="HLINK/HERMES" command="tell http quit" taskRunningMessage="HTTP Server"/>
+		<sendConsole server="HLINK/HERMES" command="load http" taskStartedMessage="HTTP Server[ ]*Listen for connect requests on TCP Port:"/>
 	</target>
 </project>

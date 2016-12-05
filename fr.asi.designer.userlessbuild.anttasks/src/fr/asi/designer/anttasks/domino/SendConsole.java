@@ -3,12 +3,16 @@ package fr.asi.designer.anttasks.domino;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import fr.asi.designer.anttasks.util.Utils;
 
 /**
  * Send a command on a domino server
@@ -28,10 +32,15 @@ public class SendConsole extends BaseNotesTask {
 	private String command;
 	
 	/**
-	 * The name of the command to check for shutdown
+	 * If this line is found in show task, then the task is still running.
 	 */
-	private String commandName;
-
+	private String taskRunningMessage;
+	
+	/**
+	 * While this line is not found in "show tasks", the task is still starting.
+	 */
+	private String taskStartedMessage;
+	
 	/**
 	 * Timeout waiting for the task to end
 	 */
@@ -48,18 +57,23 @@ public class SendConsole extends BaseNotesTask {
 				this.command
 		);
 		
-		if( this.commandName == null || this.commandName.length() == 0 ) {
+		if( Utils.isEmpty(this.taskRunningMessage) && Utils.isEmpty(this.taskStartedMessage) ) {
 			this.log("Command launched... please check manually", Project.MSG_INFO);
 			return;
 		}
 		
+		Pattern runningPattern = this.taskRunningMessage == null ? null : Pattern.compile(this.taskRunningMessage);
+		Pattern startedPattern = this.taskStartedMessage == null ? null : Pattern.compile(this.taskStartedMessage);
+		
 		try {
-			boolean finished = false;
+			boolean running = !Utils.isEmpty(this.taskRunningMessage);
+			boolean started = Utils.isEmpty(this.taskStartedMessage);
+			
 			long end = System.currentTimeMillis() + this.timeout;
 			int tick = 0;
-			while( !finished && System.currentTimeMillis() < end ) {
+			while( (running || !started) && System.currentTimeMillis() < end ) {
 				if( tick % 5 == 0 )
-					this.log("Waiting for " + this.commandName + " task to shutdown", Project.MSG_INFO);
+					this.log("Waiting for task to start/finish", Project.MSG_INFO);
 				tick++;
 				
 				Thread.sleep(1000);
@@ -69,25 +83,44 @@ public class SendConsole extends BaseNotesTask {
 						"show task"
 				);
 				
-				StringReader reader = new StringReader(tasks);
-				BufferedReader breader = new BufferedReader(reader);
-				String line = breader.readLine();
-				finished = true;
-				while( finished && line != null ) {
-					if( line.indexOf(this.commandName) != -1 )
-						finished = false;
-					else
+				if( running && runningPattern != null ) {
+					StringReader reader = new StringReader(tasks);
+					BufferedReader breader = new BufferedReader(reader);
+					String line = breader.readLine();
+					running = false;
+					while( line != null ) {
+						Matcher m = runningPattern.matcher(line);
+						if( m.find() ) {
+							running = true;
+							break;
+						}
 						line = breader.readLine();
+					}
+				}
+				
+				if( !started && startedPattern != null ) {
+					StringReader reader = new StringReader(tasks);
+					BufferedReader breader = new BufferedReader(reader);
+					String line = breader.readLine();
+					started = false;
+					while( line != null ) {
+						Matcher m = startedPattern.matcher(line);
+						if( m.find() ) {
+							started = true;
+							break;
+						}
+						line = breader.readLine();
+					}
 				}
 			}
 			if( System.currentTimeMillis() >= end )
-				throw new BuildException("Unable to detect the end of the " + this.commandName + " task");
+				throw new BuildException("Timeout monitoring task");
 		} catch(IOException e) {
 			throw new BuildException(e);
 		} catch (InterruptedException e) {
 			throw new BuildException(e);
 		}
-		this.log(this.commandName + " task stopped", Project.MSG_INFO);
+		this.log("Task finished/started", Project.MSG_INFO);
 	}
 	
 	// ==============================================================================
@@ -107,10 +140,17 @@ public class SendConsole extends BaseNotesTask {
 	}
 
 	/**
-	 * @param commandName the commandName to set
+	 * @param taskRunning the commandName to set
 	 */
-	public void setCommandName(String commandName) {
-		this.commandName = commandName;
+	public void setTaskRunningMessage(String taskRunning) {
+		this.taskRunningMessage = taskRunning;
+	}
+
+	/**
+	 * @param taskStartedMessage the taskStarted to set
+	 */
+	public void setTaskStartedMessage(String taskStartedMessage) {
+		this.taskStartedMessage = taskStartedMessage;
 	}
 
 	/**
