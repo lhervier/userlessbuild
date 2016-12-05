@@ -62,6 +62,5 @@ public class DatabaseReplicate extends BaseNotesTask {
 			task.setCommand("Replicate " + tabServers[i] + " " + this.srcDatabase);
 			task.execute();
 		}
-		this.log("Replication command launched... please check manually", Project.MSG_INFO);
 	}
 }

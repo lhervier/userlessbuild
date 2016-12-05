@@ -129,4 +129,11 @@ public abstract class BaseNotesTask extends Task {
 	public void setPassword(String password) {
 		this.password = password;
 	}
+
+	/**
+	 * @return the session
+	 */
+	public Session getSession() {
+		return session;
+	}
 }
