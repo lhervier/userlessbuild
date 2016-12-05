@@ -46,7 +46,7 @@ public class RefreshDesign extends BaseDatabaseSetTask {
 		SendConsole task = this.delegate(SendConsole.class);
 		task.setServer(server);
 		task.setCommand(cmd);
-		task.setCommandName("Designer");
+		task.setTaskRunningMessage("Designer");
 		task.execute(session);
 	}
 }
