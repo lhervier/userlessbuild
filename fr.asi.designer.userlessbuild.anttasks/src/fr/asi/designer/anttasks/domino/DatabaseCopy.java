@@ -42,8 +42,6 @@ public class DatabaseCopy extends BaseNotesTask {
 	 */
 	@Override
 	public void execute(Session session) throws NotesException {
-		this.log(Thread.currentThread().toString());
-		
 		// Remove destination database
 		DatabaseDelete deleteTask = this.delegate(DatabaseDelete.class);
 		deleteTask.setServer(this.destServer);
