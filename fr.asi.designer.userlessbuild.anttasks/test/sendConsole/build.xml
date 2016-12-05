@@ -3,5 +3,6 @@
 	<taskdef resource="userlessbuild-ant-tasks.properties"/>
 	<target name="test">
 		<sendConsole server="HLINK/HERMES" command="show tasks"/>
+		<sendConsole server="HLINK/HERMES" command="load design -f names.nsf" commandName="Designer"/>
 	</target>
 </project>
