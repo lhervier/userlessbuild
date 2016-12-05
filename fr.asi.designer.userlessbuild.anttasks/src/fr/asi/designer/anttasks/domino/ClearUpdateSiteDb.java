@@ -3,19 +3,14 @@ package fr.asi.designer.anttasks.domino;
 import lotus.domino.Database;
 import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
-import lotus.domino.NotesFactory;
 import lotus.domino.Session;
-
-import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.Task;
-
-import fr.asi.designer.anttasks.util.DominoUtils;
+import fr.asi.designer.anttasks.util.Utils;
 
 /**
  * Ant task to clear the content of an update site database
  * @author Lionel HERVIER
  */
-public class ClearUpdateSiteDb extends Task {
+public class ClearUpdateSiteDb extends BaseNotesTask {
 
 	/**
 	 * The server where to find the update site db
@@ -27,11 +22,6 @@ public class ClearUpdateSiteDb extends Task {
 	 */
 	private String database;
 	
-	/**
-	 * The password of the local ID file
-	 */
-	private String password;
-
 	/**
 	 * @param server the server to set
 	 */
@@ -47,44 +37,20 @@ public class ClearUpdateSiteDb extends Task {
 	}
 
 	/**
-	 * @param password the password to set
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
 	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	/**
-	 * Execution
-	 */
-	public void execute() throws BuildException {
+	@Override
+	public void execute(Session session) throws NotesException {
 		this.log("Clearing all content in database '" + this.server + "!!" + this.database + "'");
+		Database updateSite = null;
+		DocumentCollection coll = null;
 		try {
-			Runnable r = new Runnable() {
-				public void run() {
-					try {
-						Session session = NotesFactory.createSession(
-								(String) null, 
-								(String) null, 
-								(String) ClearUpdateSiteDb.this.password
-						);
-						
-						Database updateSite = session.getDatabase(ClearUpdateSiteDb.this.server, ClearUpdateSiteDb.this.database);
-						if( updateSite == null )
-							throw new RuntimeException("Unable to find '" + ClearUpdateSiteDb.this.server + "!!" + ClearUpdateSiteDb.this.database + "'");
-						if( !updateSite.isOpen() )
-							if( !updateSite.open() )
-								throw new RuntimeException("Unable to open '" + ClearUpdateSiteDb.this.server + "!!" + ClearUpdateSiteDb.this.database + "'");
-						
-						DocumentCollection coll = updateSite.getAllDocuments();
-						coll.removeAll(false);
-					} catch(NotesException e) {
-						throw new RuntimeException(e);
-					}
-				}
-			};
-			DominoUtils.runInNotesThread(r);
-		} catch (InterruptedException e) {
-			throw new BuildException(e, this.getLocation());
+			updateSite = this.openDatabase(this.server, this.database);
+			coll = updateSite.getAllDocuments();
+			coll.removeAll(false);
+		} finally {
+			Utils.recycleQuietly(coll);
+			Utils.recycleQuietly(updateSite);
 		}
 	}
 }
