@@ -1,27 +1,21 @@
 package fr.asi.designer.anttasks.domino;
 
-import org.apache.tools.ant.Project;
-import org.apache.tools.ant.Task;
+import lotus.domino.NotesException;
+import lotus.domino.Session;
 
-import fr.asi.designer.anttasks.util.ConsoleException;
-import fr.asi.designer.anttasks.util.DominoUtils;
+import org.apache.tools.ant.Project;
 
 /**
  * Send a command on a domino server
  * 
  * @author Lionel HERVIER & Philippe ARDIT
  */
-public class SendConsole extends Task {
+public class SendConsole extends BaseNotesTask {
 
 	/**
 	 * The server
 	 */
 	private String server;
-
-	/**
-	 * Password of the local id file
-	 */
-	private String password;
 
 	/**
 	 * The command to send
@@ -36,13 +30,6 @@ public class SendConsole extends Task {
 	}
 
 	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	/**
 	 * @param command the command to set
 	 */
 	public void setCommand(String command) {
@@ -50,21 +37,14 @@ public class SendConsole extends Task {
 	}
 
 	/**
-	 * Execution
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
 	 */
-	public void execute() {
-		try {
-			this.log("Sending the command '" + this.command + "' on server '" + this.server + "'", Project.MSG_INFO);
-
-			DominoUtils.sendConsole(this.server, this.command, this.password);
-
-			this.log("Command '" + this.command + "' sent on server '" + this.server + "'", Project.MSG_INFO);
-		} catch (ConsoleException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
-		} catch (InterruptedException e) {
-			this.log(e, Project.MSG_ERR);
-			throw new RuntimeException(e);
-		}
+	@Override
+	public void execute(Session session) throws NotesException {
+		this.log("Sending the command '" + this.command + "' on server '" + this.server + "'", Project.MSG_INFO);
+		session.sendConsoleCommand(
+				this.server, 
+				this.command
+		);
 	}
 }
