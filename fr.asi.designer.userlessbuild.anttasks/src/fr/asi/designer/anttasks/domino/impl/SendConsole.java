@@ -1,4 +1,4 @@
-package fr.asi.designer.anttasks.domino;
+package fr.asi.designer.anttasks.domino.impl;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -12,6 +12,7 @@ import lotus.domino.Session;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
 
+import fr.asi.designer.anttasks.domino.BaseNotesTask;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**

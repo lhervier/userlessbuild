@@ -1,5 +1,6 @@
-package fr.asi.designer.anttasks.domino;
+package fr.asi.designer.anttasks.domino.impl;
 
+import fr.asi.designer.anttasks.domino.BaseNotesTask;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 

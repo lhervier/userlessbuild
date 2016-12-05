@@ -1,4 +1,4 @@
-package fr.asi.designer.anttasks.domino;
+package fr.asi.designer.anttasks.domino.impl;
 
 import lotus.domino.Agent;
 import lotus.domino.Database;
@@ -7,6 +7,7 @@ import lotus.domino.Session;
 
 import org.apache.tools.ant.BuildException;
 
+import fr.asi.designer.anttasks.domino.BaseDatabaseSetTask;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**

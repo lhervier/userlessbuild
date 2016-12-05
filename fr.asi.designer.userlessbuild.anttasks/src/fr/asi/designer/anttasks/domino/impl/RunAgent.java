@@ -1,4 +1,4 @@
-package fr.asi.designer.anttasks.domino;
+package fr.asi.designer.anttasks.domino.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,8 @@ import lotus.domino.Session;
 
 import org.apache.tools.ant.BuildException;
 
+import fr.asi.designer.anttasks.domino.BaseNotesTask;
+import fr.asi.designer.anttasks.domino.ContextDocField;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**

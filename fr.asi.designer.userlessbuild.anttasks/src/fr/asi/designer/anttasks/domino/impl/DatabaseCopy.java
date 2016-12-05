@@ -1,7 +1,8 @@
-package fr.asi.designer.anttasks.domino;
+package fr.asi.designer.anttasks.domino.impl;
 
 import lotus.domino.NotesException;
 import lotus.domino.Session;
+import fr.asi.designer.anttasks.domino.BaseNotesTask;
 import fr.asi.designer.anttasks.domino.subtasks.CopyAllDocuments;
 import fr.asi.designer.anttasks.domino.subtasks.TemplateCheck;
 

@@ -1,9 +1,11 @@
-package fr.asi.designer.anttasks.domino;
+package fr.asi.designer.anttasks.domino.impl;
 
 import lotus.domino.Session;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Project;
+
+import fr.asi.designer.anttasks.domino.BaseNotesTask;
 
 
 /**
