@@ -226,9 +226,19 @@ Will sign the given database with the server ID. This task will create an admini
 
 ### clearUpdateSiteDb ###
 
+Deprecated. Use clearDb instead
+
 This task will clear an update site database.
 
 	<clearUpdateSiteDb server="SERVER/ASI" database="updateSite.nsf" password="mypassword"/>
+
+### clearDb ###
+
+This task will remove documents from a database.
+
+	<clearDb server="SERVER/ASI" database="updateSite.nsf" password="mypassword" formula="Form = 'MyForm'/>
+
+If no formula is specified, then all documents will be removed from the database.
 
 ### runAgent ###
 
@@ -276,3 +286,25 @@ This task also support nested <databaseSet> tags.
 	<enableAgent server="SERVER/ASI" agent="myagent" serverToRun="SERVER2/ASI" password="mypassword">
 		<databaseSet template="tmpl"/>
 	</enableAgent>
+
+### dxlExport ###
+
+This task export a set of documents (selection based on a formula) to a dxl file.
+The dxl file will be cleaned so that all information relative to the local database or local documents are removed: database replica id, document unid, last update date, last update author, etc...
+
+	<dxlExport 
+		password="mypassword" 
+		server="SERVER/ASI" 
+		database="mydb.nsf" 
+		formula="Form = 'MyForm'" 
+		toFile="export.dxl"/>
+
+### dxlImport ###
+
+This task will import documents stored in a dxl file.
+
+	<dxlImport
+		password="mypassword"
+		server="SERVER/ASI"
+		database="mydb.nsf"
+		fromFile="file.dxl"/>
