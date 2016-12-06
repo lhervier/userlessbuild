@@ -192,6 +192,37 @@ Run on db1, db2 and on all database that inherits from tmpl :
 		<databaseSet template="tmpl"/>
 	</atask>
 
+### sendConsole ###
+
+This task allows you to send a console command, and wait for it to finish, or wait for it to start.
+
+This task will send a "tell http quit", and will wait until the result of the "show task" command no longer contains the "HTTP Server" expression.
+
+	<sendConsole 
+		password="mypassword" 
+		server="SERVER/ASI" 
+		command="tell http quit" 
+		taskRunningMessage="HTTP Server"/>
+
+This task will launch the designer task, and wait for it to shutdown. It will loop while it found the "Designer" expression into the result of a "show task" command.
+
+	<sendConsole
+		password="mypassword"
+		server="SERVER/ASI"
+		command="load design -f names.nsf"
+		taskRunningMessage="Designer"/>
+
+This task will load the http task, and wait for it to start. It will loop while it does NOT found in the result of a "show task" command the expression given in the taskStartedMessage property.
+
+	<sendConsole 
+		password="mypassword"
+		server="SERVER/ASI" 
+		command="load http" 
+		taskStartedMessage="HTTP Server[ ]*Listen for connect requests on TCP Port:"/>
+
+Note that taskStartedMessage and taskRunningMessage are regular expressions.
+
+
 ### httpStop ###
 
 Will stop the http task. Password is the password of your local ID file.
