@@ -14,6 +14,7 @@ import java.io.Writer;
 
 import lotus.domino.Base;
 import lotus.domino.NotesException;
+import lotus.domino.Stream;
 
 public class Utils {
 	
@@ -71,10 +72,24 @@ public class Utils {
 	}
 	
 	/**
+	 * Close a object quietly
+	 * @param o the object to close
+	 */
+	public final static void closeQuietly(Closeable o) {
+		if( o == null )
+			return;
+		try {
+			o.close();
+		} catch(Throwable e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	/**
 	 * Close a stream quietly
 	 * @param o the stream to close
 	 */
-	public final static void closeQuietly(Closeable o) {
+	public final static void closeQuietly(Stream o) {
 		if( o == null )
 			return;
 		try {
