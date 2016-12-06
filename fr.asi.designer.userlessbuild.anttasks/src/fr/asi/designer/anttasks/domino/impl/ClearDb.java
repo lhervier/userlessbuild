@@ -24,6 +24,34 @@ public class ClearDb extends BaseNotesTask {
 	private String database;
 	
 	/**
+	 * The formula
+	 */
+	private String formula;
+	
+	/**
+	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
+	 */
+	@Override
+	public void execute(Session session) throws NotesException {
+		this.log("Clearing all content in database '" + this.server + "!!" + this.database + "'");
+		Database db = null;
+		DocumentCollection coll = null;
+		try {
+			db = this.openDatabase(this.server, this.database);
+			if( Utils.isEmpty(this.formula) )
+				coll = db.getAllDocuments();
+			else
+				coll = db.search(this.formula);
+			coll.removeAll(false);
+		} finally {
+			Utils.recycleQuietly(coll);
+			Utils.recycleQuietly(db);
+		}
+	}
+	
+	// ===============================================================
+	
+	/**
 	 * @param server the server to set
 	 */
 	public void setServer(String server) {
@@ -38,20 +66,9 @@ public class ClearDb extends BaseNotesTask {
 	}
 
 	/**
-	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
+	 * @param formula the formula to set
 	 */
-	@Override
-	public void execute(Session session) throws NotesException {
-		this.log("Clearing all content in database '" + this.server + "!!" + this.database + "'");
-		Database updateSite = null;
-		DocumentCollection coll = null;
-		try {
-			updateSite = this.openDatabase(this.server, this.database);
-			coll = updateSite.getAllDocuments();
-			coll.removeAll(false);
-		} finally {
-			Utils.recycleQuietly(coll);
-			Utils.recycleQuietly(updateSite);
-		}
+	public void setFormula(String formula) {
+		this.formula = formula;
 	}
 }

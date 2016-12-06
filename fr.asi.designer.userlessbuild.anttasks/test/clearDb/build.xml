@@ -9,5 +9,10 @@
 				password="" 
 				server="HLINK/HERMES" 
 				database="clearUpdateSite.nsf"/>
+		<clearDb
+				password="" 
+				server="HLINK/HERMES" 
+				database="testClearDb.nsf"
+				formula="Form = 'Reclamation'"/>
 	</target>
 </project>
