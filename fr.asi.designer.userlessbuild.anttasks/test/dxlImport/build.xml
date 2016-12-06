@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-dxlImport" basedir="." default="test">
+	<taskdef resource="userlessbuild-ant-tasks.properties"/>
+	<target name="test">
+		<dxlImport 
+				server="HLINK/HERMES" 
+				database="testDxlImport.nsf" 
+				fromFile="depannage.xml"/>
+	</target>
+</project>
