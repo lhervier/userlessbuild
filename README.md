@@ -339,3 +339,9 @@ This task will import documents stored in a dxl file.
 		server="SERVER/ASI"
 		database="mydb.nsf"
 		fromFile="file.dxl"/>
+
+dxlImport can also work on a databaseSet. This task will import documents from the dxl file into every databases that rely on the template "mytemplate".
+
+	<dxlImport password="mypassword" server="SERVER/ASI" fromFile="file.dxl">
+		<databaseSet template="mytemplate"/>
+	</dxlImport>

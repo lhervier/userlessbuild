@@ -9,14 +9,14 @@ import lotus.domino.Stream;
 
 import org.apache.tools.ant.BuildException;
 
-import fr.asi.designer.anttasks.domino.BaseNotesTask;
+import fr.asi.designer.anttasks.domino.BaseDatabaseSetTask;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**
  * Import a dxl file into a database
  * @author Lionel HERVIER
  */
-public class DxlImport extends BaseNotesTask {
+public class DxlImport extends BaseDatabaseSetTask {
 
 	/**
 	 * Success log message
@@ -26,30 +26,22 @@ public class DxlImport extends BaseNotesTask {
 				"</DXLImporterLog>";
 	
 	/**
-	 * The server
-	 */
-	private String server;
-	
-	/**
-	 * The database
-	 */
-	private String database;
-	
-	/**
 	 * The file to get the DXL from
 	 */
 	private String fromFile;
 	
 	/**
-	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)
+	 * @see fr.asi.designer.anttasks.domino.BaseDatabaseSetTask#execute(lotus.domino.Session, java.lang.String, java.lang.String)
 	 */
 	@Override
-	protected void execute(Session session) throws NotesException {
+	protected void execute(Session session, String server, String database) throws NotesException {
+		this.log("Importing " + this.fromFile + " to " + server + "!!" + database);
+		
 		Database db = null;
 		Stream stream = null;
 		lotus.domino.DxlImporter importer = null;
 		try {
-			db = this.openDatabase(this.server, this.database);
+			db = this.openDatabase(server, database);
 			
 			File f = new File(this.getProject().getProperty("basedir") + "/" + this.fromFile);
 			stream = session.createStream();
@@ -70,20 +62,6 @@ public class DxlImport extends BaseNotesTask {
 	}
 	
 	// =========================================================================
-
-	/**
-	 * @param server the server to set
-	 */
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	/**
-	 * @param database the database to set
-	 */
-	public void setDatabase(String database) {
-		this.database = database;
-	}
 
 	/**
 	 * @param fromFile the fromFile to set

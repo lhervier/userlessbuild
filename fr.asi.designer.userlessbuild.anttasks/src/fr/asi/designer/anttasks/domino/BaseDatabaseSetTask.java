@@ -46,7 +46,7 @@ public abstract class BaseDatabaseSetTask extends BaseNotesTask {
 	 * @param dbPath a database path
 	 * @throws NotesException
 	 */
-	public abstract void execute(Session session, String server, String dbPath) throws NotesException;
+	protected abstract void execute(Session session, String server, String dbPath) throws NotesException;
 	
 	/**
 	 * @see fr.asi.designer.anttasks.domino.BaseNotesTask#execute(lotus.domino.Session)

@@ -6,5 +6,10 @@
 				server="HLINK/HERMES" 
 				database="testDxlImport.nsf" 
 				fromFile="depannage.xml"/>
+		<dxlImport 
+				server="HLINK/HERMES" 
+				fromFile="depannage.xml">
+			<databaseSet database="testDxlImport.nsf"/>
+		</dxlImport>
 	</target>
 </project>
