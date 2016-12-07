@@ -345,3 +345,49 @@ dxlImport can also work on a databaseSet. This task will import documents from t
 	<dxlImport password="mypassword" server="SERVER/ASI" fromFile="file.dxl">
 		<databaseSet template="mytemplate"/>
 	</dxlImport>
+
+### fieldExport ###
+
+This task will only export a set of fields from a document
+
+	<fieldExport
+		password="mypassword"
+		server="SERVER/ASI"
+		database="mydb.nsf"
+		formula="Form = 'param'"
+		fields="Field1,Field2,Field3"
+		toFile="fields.xml"/>
+
+This will create a file named fields.xml that contains a subset of the DXL extract. All field types are supported (including rich text).
+
+	<?xml version="1.0" encoding="UTF-8"?>
+	<document xmlns="http://www.lotus.com/dxl">
+  		<item name="Field1">
+    		<text>value1</text>
+  		</item>
+		<item name="Field2">
+			<text>value1</text>
+			<text>value2</text>
+		</item>
+		<item name="Field3">
+			<datetime>20161123T094516,00+01</datetime>
+		</item>
+	</document>
+
+Note that the task will fail if the formula selects more than one document.
+
+### fieldImport ###
+
+This task will import a set of fields in a set of documents. This task can take databaseSets.
+
+	<fieldImport
+			password="mypassword"
+			server="SERVER/ASI"
+			formula="Form = 'MyForm'"
+			fromFile="fields.xml">
+		<databaseSet template="mytemplate"/>
+	</fieldImport>
+
+Every documents that are using the "MyForm" form in every databases that a using the "mytemplate" template will be updated with the fields defined in the fields.xml file.
+
+If a field already exists in a document, it will be overwritten (including its type). If it does not exists, it will be created.
