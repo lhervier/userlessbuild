@@ -3,6 +3,7 @@ package fr.asi.designer.anttasks.domino.impl;
 import java.io.File;
 
 import lotus.domino.Database;
+import lotus.domino.DxlImporter;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
 import lotus.domino.Stream;
@@ -39,7 +40,7 @@ public class DxlImport extends BaseDatabaseSetTask {
 		
 		Database db = null;
 		Stream stream = null;
-		lotus.domino.DxlImporter importer = null;
+		DxlImporter importer = null;
 		try {
 			db = this.openDatabase(server, database);
 			
@@ -57,6 +58,8 @@ public class DxlImport extends BaseDatabaseSetTask {
 			if( !logs.equals(IMPORT_SUCCESS) )
 				throw new BuildException(logs);
 		} finally {
+			Utils.recycleQuietly(importer);
+			Utils.recycleQuietly(db);
 			Utils.closeQuietly(stream);
 		}
 	}
