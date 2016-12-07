@@ -7,10 +7,6 @@ import java.io.InputStream;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -28,11 +24,11 @@ import org.apache.tools.ant.BuildException;
 import org.apache.xml.serialize.OutputFormat;
 import org.apache.xml.serialize.XMLSerializer;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import fr.asi.designer.anttasks.domino.BaseNotesTask;
+import fr.asi.designer.anttasks.util.DOMUtils;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**
@@ -44,7 +40,7 @@ public class DxlExport extends BaseNotesTask {
 	/**
 	 * Un log succès
 	 */
-	private static final String EXPORT_SUCCESS = "<?xml version='1.0'?>\n" +
+	public static final String EXPORT_SUCCESS = "<?xml version='1.0'?>\n" +
 			"<DXLExporterLog>\n" +
 			"</DXLExporterLog>";
 	
@@ -146,44 +142,14 @@ public class DxlExport extends BaseNotesTask {
 	 */
 	private void clean(Element rootElt) {
 		// Clean database tag
-		this.removeAttributes(rootElt, "replicaid", "version", "path", "maintenanceversion");
-		this.removeChild(rootElt, "databaseinfo");
+		DOMUtils.removeAttributes(rootElt, "replicaid", "version", "path", "maintenanceversion");
+		DOMUtils.removeChild(rootElt, "databaseinfo");
 		
 		// Clean documents
 		NodeList docLst = rootElt.getElementsByTagName("document");
 		for( int i=0; i<docLst.getLength(); i++ ) {
 			Element doc = (Element) docLst.item(i);
-			this.removeChild(doc, "noteinfo", "updatedby");
-		}
-	}
-	
-	/**
-	 * Remove attributes from a parent node
-	 * @param parentNode the parent Node
-	 * @param attributes the attributes names to remove
-	 */
-	private void removeAttributes(Element parentNode, String... attributes) {
-		for( String attr : attributes )
-			parentNode.removeAttribute(attr);
-	}
-	
-	/**
-	 * Remove child nodes from a parent node
-	 * @param parentNode the parent Node
-	 * @param childNodes the name of the child nodes to remove
-	 */
-	private void removeChild(Element parentNode, String... childNodes) {
-		List<String> nodesToRemove = Arrays.asList(childNodes);
-		NodeList children = parentNode.getChildNodes();
-		List<Node> toRemove = new ArrayList<Node>();
-		for( int i=0; i<children.getLength(); i++ ) {
-			Node currNode = children.item(i);
-			if( nodesToRemove.contains(currNode.getNodeName()) )
-				toRemove.add(currNode);
-		}
-		for( Iterator<Node> it = toRemove.iterator(); it.hasNext(); ) {
-			Node nd = it.next();
-			parentNode.removeChild(nd);
+			DOMUtils.removeChild(doc, "noteinfo", "updatedby");
 		}
 	}
 	
