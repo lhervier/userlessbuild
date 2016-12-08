@@ -87,12 +87,19 @@ To include the tasks, just use a standard taskdef tag :
 
 	<project name="test">
 		...
-		<path id="project.class.path">
-			<fileset dir="lib" includes="*.jar" />
-		</path>
+		<taskdef
+				resource="userlessbuild.antlib.xml"
+				classpath="lib/userlessbuild-ant-tasks.jar"/>
+		...
+	</project>
+
+You can also use an old .properties file, but you will miss the additional conditions :
+
+	<project name="test">
+		...
 		<taskdef
 				resource="userlessbuild-ant-tasks.properties"
-				classpathref="project.class.path"/>
+				classpath="lib/userlessbuild-ant-tasks.jar"/>
 		...
 	</project>
 
@@ -150,7 +157,7 @@ This task will change the name of the template that a given database is declarin
 
 	<setOnDiskTemplate onDiskPath="${basedir}/mydatabase-ondisk" masterTemplateName="mytmpl"/>
 
-## Tasks to manipulate Domino Servers ##
+## Tasks to manipulate data on Domino Servers ##
 
 These tasks are using the standard notes apis. They will open sessions to the Notes server using the local Notes client. For this, you will have to give them the password of the local ID file.
 
@@ -465,3 +472,35 @@ This task will check that the given databases contains only XPages that have bee
 			server="SERVER/ASI"
 		<databaseSet template="mytemplate"/>
 	</checkXPagesCompiled>
+
+# Additionnal Ant conditions #
+
+## documentExists ##
+
+this condition allows you to define a property if the given database contains at least one document that match a given formula.
+
+	<project name="test" basedir="." default="test" xmlns:if="ant:if">
+		<property name="PASSWORD" value="mypassword"/>
+		<property name="SERVER" value="SERVER/ASI"/>
+		<property name="DATABASE" value="mydb.nsf"/>
+		<target name="test">
+			<condition property="param.exists">
+				<documentExists 
+						password="${PASSWORD}" 
+						server="${SERVER}" 
+						database="${DATABASE}" 
+						formula="Form = 'param'"/>
+			</condition>
+			<dxlImport
+					password="${PASSWORD}"
+					server="${SERVER}"
+					database="${DATABASE}"
+					fromFile="param.dxl"
+					if:set="document.exists"/>
+		</target>
+	</project>
+
+This will create a default param document from the param.dxl file (file generated using the dxlExport task) only if such a document does not already exists in the database.
+
+Note that to use "if:set", you will need ant 1.6 min.
+ 

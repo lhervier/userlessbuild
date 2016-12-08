@@ -31,4 +31,7 @@
 	
 	<!-- Deprecated -->
 	<taskdef name="clearUpdateSiteDb" classname="fr.asi.designer.anttasks.domino.impl.ClearUpdateSiteDb"/>
+	
+	<!-- Conditions -->
+	<typedef name="documentExists" classname="fr.asi.designer.anttasks.conditions.impl.DocumentExists"/>
 </antlib>
