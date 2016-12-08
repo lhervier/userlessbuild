@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-checkXPagesCompiled" basedir="." default="test">
+	<path id="project.class.path">
+		<fileset dir="../.." includes="userlessbuild-ant-tasks.jar" />
+	</path>
+	<taskdef resource="userlessbuild-ant-tasks.properties" classpathref="project.class.path"/>
+	<target name="test">
+		<checkXPagesCompiled
+				password="" 
+				server="HLINK/HERMES" 
+				database="checkXPageCompiled.nsf"/>
+	</target>
+</project>

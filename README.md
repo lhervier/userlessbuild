@@ -455,3 +455,13 @@ This task will clear the name of the template that a design element depends on.
 This taks will remove the name of the name of template that every view of every databases that depends on the "mytemplate" depends on.
 
 For the "select" property, you can use the same list as the clearProhibitDesignRefresh task.
+
+### checkXPageCompiled ###
+
+This task will check that the given databases contains only XPages that have been compiled.
+
+	<checkXPagesCompiled
+			password="mypassword"
+			server="SERVER/ASI"
+		<databaseSet template="mytemplate"/>
+	</checkXPagesCompiled>
