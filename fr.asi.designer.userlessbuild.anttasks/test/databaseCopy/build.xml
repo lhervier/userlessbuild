@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="test-databaseCopy" basedir="." default="test">
-	<path id="project.class.path">
-		<fileset dir="../.." includes="userlessbuild-ant-tasks.jar" />
-	</path>
-	<taskdef resource="userlessbuild-ant-tasks.properties" classpathref="project.class.path"/>
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../userlessbuild-ant-tasks.jar"/>
 	<target name="test">
 		<databaseCopy 
 				password="" 
