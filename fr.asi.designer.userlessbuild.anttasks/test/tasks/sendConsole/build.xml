@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-sendConsole" basedir="." default="test">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<sendConsole server="HLINK/HERMES" command="show tasks"/>
+		<sendConsole server="HLINK/HERMES" command="load design -f names.nsf" taskRunningMessage="Designer"/>
+		<sendConsole server="HLINK/HERMES" command="tell http quit" taskRunningMessage="HTTP Server"/>
+		<sendConsole server="HLINK/HERMES" command="load http" taskStartedMessage="HTTP Server[ ]*Listen for connect requests on TCP Port:"/>
+	</target>
+</project>

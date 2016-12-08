@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-clearDb" basedir="." default="test">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<clearDb
+				password="" 
+				server="HLINK/HERMES" 
+				database="clearUpdateSite.nsf"/>
+		<clearDb
+				password="" 
+				server="HLINK/HERMES" 
+				database="testClearDb.nsf"
+				formula="Form = 'Reclamation'"/>
+		<clearDb
+				password="" 
+				server="HLINK/HERMES" 
+				formula="PMJobID = 'PX16HAFXDK5'">
+			<databaseSet database="testClearDb.nsf"/>
+		</clearDb>
+	</target>
+</project>

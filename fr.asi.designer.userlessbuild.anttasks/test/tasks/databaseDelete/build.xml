@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-databaseDelete" basedir="." default="test">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<databaseDelete password="" server="HLINK/HERMES" database="do_not_exists.nsf"/>
+		<databaseDelete password="" server="HLINK/HERMES" database="exists.nsf"/>
+	</target>
+</project>

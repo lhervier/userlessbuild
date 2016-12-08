@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-clearProhibitDesignRefresh" basedir="." default="test">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<clearProhibitDesignRefresh
+				password="" 
+				server="HLINK/HERMES" 
+				database="clearProhibitDesignRefresh.nsf"
+				select="ALL"/>
+	</target>
+</project>

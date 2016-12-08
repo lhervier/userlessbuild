@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-databaseCopy" basedir="." default="test">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<databaseCopy 
+				password="" 
+				srcServer="HLINK/HERMES" 
+				srcDatabase="testDatabaseCopy.nsf"
+				destServer="HLINK/HERMES"	
+				destDatabase="testDatabaseCopy_copy.nsf"/>
+		<!-- FIXME: This test must fail... -->
+		<databaseCopy 
+				password="" 
+				srcServer="HLINK/HERMES" 
+				srcDatabase="testDatabaseCopy.ntf"
+				destServer="HLINK/HERMES"	
+				destDatabase="testDatabaseCopy_copy.ntf"
+				templateCheck="true"/>
+	</target>
+</project>
