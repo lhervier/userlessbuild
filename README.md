@@ -391,3 +391,67 @@ This task will import a set of fields in a set of documents. This task can take 
 Every documents that are using the "MyForm" form in every databases that a using the "mytemplate" template will be updated with the fields defined in the fields.xml file.
 
 If a field already exists in a document, it will be overwritten (including its type). If it does not exists, it will be created.
+
+### clearProhibitDesignRefresh ###
+
+This task allows you to remove the "Prohibit design refresh" flag on a set design elements.
+
+	<clearProhibitDesignRefresh
+			password="mypassword"
+			server="SERVER/ASI"
+			select="VIEWS">
+		<databaseSet template="mytemplate"/>
+	</clearProhibitDesignRefresh>
+
+This task will remove the flag from all the views that are present in any database that relies on the "mytemplate" template.
+
+Possible values for the select property are :
+
+	+------------------------+---------------------------+
+	| ALL                    | All design elements       |
+	| ACTIONS                | Actions                   |
+	| AGENTS                 | Agents (LS and Java)      |
+	| APPLETS                | Applets                   |
+	| DATABASE_SCRIPTS       | Database scripts          |
+	| COLUMNS                | Shared columns            |
+	| DATA_CONNECTIONS       | Data connections          |
+	| FILE_RESOURCE          | Files                     |
+	| HIDDEN_FILE            | Hidden files (for xpages) |
+	| CUSTOM_CONTROLS        | Custom controls           |
+	| THEMES                 | Themes                    |
+	| XPAGES                 | XPages                    |
+	| FOLDERS                | Folders                   |
+	| FORMS                  | Forms                     |
+	| FRAMESETS              | Framesets                 |
+	| NAVIGATORS             | Navigators                |
+	| OUTLINES               | Outlines                  |
+	| PAGES                  | Pages                     |
+	| PROFILES               | Profiles documents        |
+	| SCRIPT_LIBRARIES       | Script libraries          |
+	| WEB_SERVICE_CONSUMERS  | Web service consumers     |
+	| WEB_SERVICE_PROVIDERS  | Web service providers     |
+	| SHARED_FIELDS          | Shared fields             |
+	| SUBFORMS               | Subforms                  |
+	| VIEWS                  | Views                     |
+	| WIRING_PROPERTIES      | Wiring properties         |
+	| COMPOSITE_APPLICATIONS | Composite applications    |
+	| IMAGES                 | Image resources           |
+	| STYLESHEETS            | Stylesheets               |
+	| DB2_ACCESS_VIEWS       | DB2 access views          |
+	| ICON                   | Icon document             |
+	+------------------------+---------------------------+
+
+### clearInheritTemplateFrom ###
+
+This task will clear the name of the template that a design element depends on.
+
+	<clearInheritTemplateFrom
+			password="mypassword"
+			server="SERVER/ASI"
+			select="VIEWS">
+		<databaseSet template="mytemplate"/>
+	</clearInheritTemplateFrom>
+
+This taks will remove the name of the name of template that every view of every databases that depends on the "mytemplate" depends on.
+
+For the "select" property, you can use the same list as the clearProhibitDesignRefresh task.
