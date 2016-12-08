@@ -118,6 +118,9 @@ public abstract class BaseNotesTask extends Task {
 		ret.setRuntimeConfigurableWrapper(this.getRuntimeConfigurableWrapper());
 		ret.setTaskName(this.getTaskName());
 		ret.setTaskType(this.getTaskType());
+		
+		ret.setPassword(this.password);
+		
 		return ret;
 	}
 	
