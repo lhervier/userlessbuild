@@ -9,7 +9,7 @@ import lotus.domino.Session;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Task;
 
-import fr.asi.designer.anttasks.util.ExceptionHolder;
+import fr.asi.designer.anttasks.util.ObjectHolder;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**
@@ -38,7 +38,7 @@ public abstract class BaseNotesTask extends Task {
 	 * Execution
 	 */
 	public final void execute() {
-		final ExceptionHolder holder = new ExceptionHolder();
+		final ObjectHolder<Throwable> exHolder = new ObjectHolder<Throwable>();
 		Thread t = new NotesThread() {
 			public void runNotes() {
 				try {
@@ -49,7 +49,7 @@ public abstract class BaseNotesTask extends Task {
 					);
 					BaseNotesTask.this.execute(BaseNotesTask.this.session);
 				} catch(Throwable e) {
-					holder.ex = e;
+					exHolder.value = e;
 				} finally {
 					Utils.recycleQuietly(BaseNotesTask.this.session);
 				}
@@ -61,9 +61,9 @@ public abstract class BaseNotesTask extends Task {
 		} catch (InterruptedException e) {
 			throw new BuildException(e);
 		}
-		if( holder.ex != null ) {
-			holder.ex.printStackTrace(System.err);
-			throw new BuildException(holder.ex);
+		if( exHolder.value != null ) {
+			exHolder.value.printStackTrace(System.err);
+			throw new BuildException(exHolder.value);
 		}
 	}
 	
