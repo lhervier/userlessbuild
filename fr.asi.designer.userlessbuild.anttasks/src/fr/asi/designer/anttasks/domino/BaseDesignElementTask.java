@@ -77,109 +77,112 @@ public abstract class BaseDesignElementTask extends BaseDatabaseSetTask {
 			db = this.openDatabase(server, database);
 			nc = db.createNoteCollection(false);
 			
-			// Selecting all design elements => Delegates to sub tasks
-			Type t = Type.valueOf(this.select);
-			if( Type.ALL.equals(t) ) {
-				for( Type tp : Type.values() ) {
-					if( Type.ALL.equals(tp) )
-						continue;
-					BaseDesignElementTask task = this.delegate(this.getClass());
-					task.setSelect(tp.name());
-					task.execute();
+			String[] selects = this.select.split(",");
+			for( String select : selects ) {
+				// Selecting all design elements => Delegates to sub tasks
+				Type t = Type.valueOf(select);
+				if( Type.ALL.equals(t) ) {
+					for( Type tp : Type.values() ) {
+						if( Type.ALL.equals(tp) )
+							continue;
+						BaseDesignElementTask task = this.delegate(this.getClass());
+						task.setSelect(tp.name());
+						task.execute();
+					}
+					return;
 				}
-				return;
-			}
-			
-			// Build collection
-			// See https://www-10.lotus.com/ldd/ddwiki.nsf/dx/ls-design-programming.htm (version 1 !!!!!)
-			if( Type.ACTIONS.equals(t) ) {
-				nc.setSelectActions(true);
-			} else if( Type.AGENTS.equals(t) ) {
-				nc.setSelectAgents(true);
-			} else if( Type.APPLETS.equals(t) ) {
-				nc.selectAllDesignElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"@\")");
-			} else if( Type.DATABASE_SCRIPTS.equals(t) ) {
-				nc.setSelectDatabaseScript(true);
-			} else if( Type.COLUMNS.equals(t) ) {
-				nc.setSelectMiscIndexElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"^\")");
-			} else if( Type.DATA_CONNECTIONS.equals(t) ) {
-				nc.setSelectDataConnections(true);
-			} else if( Type.FILE_RESOURCE.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"g\") & !@Matches($Flags; \"*{~K[];`}*\")");
-			} else if( Type.HIDDEN_FILE.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \"~\") & !@Matches($Flags; \"*{~K[];`}*\")");
-			} else if( Type.CUSTOM_CONTROLS.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \";\")");
-			} else if( Type.THEMES.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \"`\")");
-			} else if( Type.XPAGES.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \"K\")");
-			} else if( Type.FOLDERS.equals(t) ) {
-				nc.setSelectFolders(true);
-			} else if( Type.FORMS.equals(t) ) {
-				nc.setSelectForms(true);
-			} else if( Type.FRAMESETS.equals(t) ) {
-				nc.setSelectFramesets(true);
-			} else if( Type.NAVIGATORS.equals(t) ) {
-				nc.setSelectNavigators(true);
-			} else if( Type.OUTLINES.equals(t) ) {
-				nc.setSelectOutlines(true);
-			} else if( Type.PAGES.equals(t) ) {
-				nc.setSelectPages(true);
-			} else if( Type.PROFILES.equals(t) ) {
-				nc.setSelectProfiles(true);
-			} else if( Type.SCRIPT_LIBRARIES.equals(t) ) {
-				nc.setSelectScriptLibraries(true);
-				nc.setSelectionFormula("!@Contains($FlagsExt; \"W\")");
-			} else if( Type.WEB_SERVICE_CONSUMERS.equals(t) ) {
-				nc.setSelectScriptLibraries(true);
-				nc.setSelectionFormula("@Contains($FlagsExt; \"W\")");
-			} else if( Type.WEB_SERVICE_PROVIDERS.equals(t) ) {
-				nc.setSelectMiscCodeElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"{\")");
-			} else if( Type.SHARED_FIELDS.equals(t) ) {
-				nc.setSelectSharedFields(true);
-			} else if( Type.SUBFORMS.equals(t) ) {
-				nc.setSelectSubforms(true);
-			} else if( Type.VIEWS.equals(t) ) {
-				nc.setSelectViews(true);
-			} else if( Type.WIRING_PROPERTIES.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \":\")");
-			} else if( Type.COMPOSITE_APPLICATIONS.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"|\")");
-			} else if( Type.IMAGES.equals(t) ) {
-				nc.setSelectImageResources(true);
-			} else if( Type.STYLESHEETS.equals(t) ) {
-				nc.setSelectStylesheetResources(true);
-			} else if( Type.DB2_ACCESS_VIEWS.equals(t) ) {
-				nc.setSelectMiscFormatElements(true);
-				nc.setSelectionFormula("@Contains($Flags; \"z\")");
-			} else if( Type.ICON.equals(t) ) {
-				nc.setSelectIcon(true);
-			} else
-				throw new BuildException("Unknown design element type '" + this.select + "'");
-			
-			nc.buildCollection();
-			
-			String noteId = nc.getFirstNoteID();
-			while( !Utils.isEmpty(noteId) ) {
-				Document doc = null;
-				try {
-					doc = db.getDocumentByID(noteId);
-					this.execute(t, doc);
-				} finally {
-					Utils.recycleQuietly(doc);
+				
+				// Build collection
+				// See https://www-10.lotus.com/ldd/ddwiki.nsf/dx/ls-design-programming.htm (version 1 !!!!!)
+				if( Type.ACTIONS.equals(t) ) {
+					nc.setSelectActions(true);
+				} else if( Type.AGENTS.equals(t) ) {
+					nc.setSelectAgents(true);
+				} else if( Type.APPLETS.equals(t) ) {
+					nc.selectAllDesignElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"@\")");
+				} else if( Type.DATABASE_SCRIPTS.equals(t) ) {
+					nc.setSelectDatabaseScript(true);
+				} else if( Type.COLUMNS.equals(t) ) {
+					nc.setSelectMiscIndexElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"^\")");
+				} else if( Type.DATA_CONNECTIONS.equals(t) ) {
+					nc.setSelectDataConnections(true);
+				} else if( Type.FILE_RESOURCE.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"g\") & !@Matches($Flags; \"*{~K[];`}*\")");
+				} else if( Type.HIDDEN_FILE.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \"~\") & !@Matches($Flags; \"*{~K[];`}*\")");
+				} else if( Type.CUSTOM_CONTROLS.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \";\")");
+				} else if( Type.THEMES.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \"`\")");
+				} else if( Type.XPAGES.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"g\") & @Contains($Flags; \"K\")");
+				} else if( Type.FOLDERS.equals(t) ) {
+					nc.setSelectFolders(true);
+				} else if( Type.FORMS.equals(t) ) {
+					nc.setSelectForms(true);
+				} else if( Type.FRAMESETS.equals(t) ) {
+					nc.setSelectFramesets(true);
+				} else if( Type.NAVIGATORS.equals(t) ) {
+					nc.setSelectNavigators(true);
+				} else if( Type.OUTLINES.equals(t) ) {
+					nc.setSelectOutlines(true);
+				} else if( Type.PAGES.equals(t) ) {
+					nc.setSelectPages(true);
+				} else if( Type.PROFILES.equals(t) ) {
+					nc.setSelectProfiles(true);
+				} else if( Type.SCRIPT_LIBRARIES.equals(t) ) {
+					nc.setSelectScriptLibraries(true);
+					nc.setSelectionFormula("!@Contains($FlagsExt; \"W\")");
+				} else if( Type.WEB_SERVICE_CONSUMERS.equals(t) ) {
+					nc.setSelectScriptLibraries(true);
+					nc.setSelectionFormula("@Contains($FlagsExt; \"W\")");
+				} else if( Type.WEB_SERVICE_PROVIDERS.equals(t) ) {
+					nc.setSelectMiscCodeElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"{\")");
+				} else if( Type.SHARED_FIELDS.equals(t) ) {
+					nc.setSelectSharedFields(true);
+				} else if( Type.SUBFORMS.equals(t) ) {
+					nc.setSelectSubforms(true);
+				} else if( Type.VIEWS.equals(t) ) {
+					nc.setSelectViews(true);
+				} else if( Type.WIRING_PROPERTIES.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \":\")");
+				} else if( Type.COMPOSITE_APPLICATIONS.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"|\")");
+				} else if( Type.IMAGES.equals(t) ) {
+					nc.setSelectImageResources(true);
+				} else if( Type.STYLESHEETS.equals(t) ) {
+					nc.setSelectStylesheetResources(true);
+				} else if( Type.DB2_ACCESS_VIEWS.equals(t) ) {
+					nc.setSelectMiscFormatElements(true);
+					nc.setSelectionFormula("@Contains($Flags; \"z\")");
+				} else if( Type.ICON.equals(t) ) {
+					nc.setSelectIcon(true);
+				} else
+					throw new BuildException("Unknown design element type '" + select + "'");
+				
+				nc.buildCollection();
+				
+				String noteId = nc.getFirstNoteID();
+				while( !Utils.isEmpty(noteId) ) {
+					Document doc = null;
+					try {
+						doc = db.getDocumentByID(noteId);
+						this.execute(t, doc);
+					} finally {
+						Utils.recycleQuietly(doc);
+					}
+					noteId = nc.getNextNoteID(noteId);
 				}
-				noteId = nc.getNextNoteID(noteId);
 			}
 		} finally {
 			Utils.recycleQuietly(nc);

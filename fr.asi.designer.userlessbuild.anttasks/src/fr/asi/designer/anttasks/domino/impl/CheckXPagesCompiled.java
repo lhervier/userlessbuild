@@ -18,7 +18,7 @@ public class CheckXPagesCompiled extends BaseDesignElementTask {
 	 * Force selection of XPages
 	 */
 	public CheckXPagesCompiled() {
-		super.setSelect(Type.XPAGES.name());
+		super.setSelect(Type.XPAGES.name() + "," + Type.CUSTOM_CONTROLS.name());
 	}
 	
 	/**
