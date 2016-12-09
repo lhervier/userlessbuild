@@ -16,7 +16,7 @@ import fr.asi.designer.anttasks.domino.ContextDocField;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**
- * Ant task to launch an agent. This task can contain
+ * Ant task to launch an agent using the Notes API NotesAgent.run. This task can contain
  * {@link ContextDocField} if you need to add values to the
  * document context.
  * @author Lionel HERVIER
