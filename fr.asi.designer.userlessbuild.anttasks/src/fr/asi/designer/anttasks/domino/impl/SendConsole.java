@@ -53,10 +53,11 @@ public class SendConsole extends BaseNotesTask {
 	@Override
 	public void execute(Session session) throws NotesException {
 		this.log("Sending command '" + this.command + "' to server '" + this.server + "'", Project.MSG_INFO);
-		session.sendConsoleCommand(
+		String taskMsg = session.sendConsoleCommand(
 				this.server, 
 				this.command
 		);
+		this.log(taskMsg);
 		
 		if( Utils.isEmpty(this.taskRunningMessage) && Utils.isEmpty(this.taskStartedMessage) ) {
 			this.log("Command launched... please check manually", Project.MSG_INFO);
