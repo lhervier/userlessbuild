@@ -287,6 +287,18 @@ This task will run an agent. It will make it run on a context document, on which
 		<contextDocField name="MyField2" value="my other value"/>
 	</runAgent>
 
+### tellAmgrRun ###
+
+This task will run a scheduled agent using a "tell amgr run" console command. It will NOT wait for the agent to finish.
+
+	<tellAmgrRun
+			server="SERVER/ASI"
+			agent="dataMigration">
+		<databaseSet template="mytemplate">
+	</tellAmgrRun>
+
+This will aunch the "dataMigration" agent on every database that relies on the "mytemplate" template.
+
 ### refreshDesign ###
 
 This task will refresh the design of the given database. The refresh is done via the domino "designer" task. The task will end when it will detect that the domino "designer" task ends.

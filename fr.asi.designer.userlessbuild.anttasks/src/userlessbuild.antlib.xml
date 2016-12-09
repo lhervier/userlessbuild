@@ -28,6 +28,7 @@
 	<taskdef name="clearProhibitDesignRefresh" classname="fr.asi.designer.anttasks.domino.impl.ClearProhibitDesignRefresh"/>
 	<taskdef name="clearInheritTemplateFrom" classname="fr.asi.designer.anttasks.domino.impl.ClearInheritTemplateFrom"/>
 	<taskdef name="checkXPagesCompiled" classname="fr.asi.designer.anttasks.domino.impl.CheckXPagesCompiled"/>
+	<taskdef name="tellAmgrRun" classname="fr.asi.designer.anttasks.domino.impl.TellAmgrRun"/>
 	
 	<!-- Deprecated -->
 	<taskdef name="clearUpdateSiteDb" classname="fr.asi.designer.anttasks.domino.impl.ClearUpdateSiteDb"/>

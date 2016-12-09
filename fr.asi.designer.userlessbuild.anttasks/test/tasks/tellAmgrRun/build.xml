@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-tellAmgrRun" basedir="." default="test">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<tellAmgrRun 
+				server="HLINK/HERMES" 
+				agent="testAgent">
+			<databaseSet database="testTellAmgrRun.nsf"/>
+		</tellAmgrRun>
+	</target>
+</project>
