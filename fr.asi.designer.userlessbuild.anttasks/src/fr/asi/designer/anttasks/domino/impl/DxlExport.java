@@ -75,13 +75,16 @@ public class DxlExport extends BaseNotesTask {
 		NoteCollection nc = null;
 		DxlExporter exporter = null;
 		try {
-			// Build the document collection
-			db = this.openDatabase(this.server, this.database);
+			// Prepare the stream
 			stream = session.createStream();
 			File f = new File(this.getProject().getProperty("basedir") + "/" + this.toFile);
+			Utils.createFolder(f.getParentFile());		// Ensure folder exists
 			if( !stream.open(f.getAbsolutePath()) )
 				throw new BuildException("Unable to open file " + toFile + " for writing");
 			stream.truncate();
+			
+			// Build the document collection
+			db = this.openDatabase(this.server, this.database);
 			nc = db.createNoteCollection(false);
 			nc.setSelectDocuments(true);
 			nc.setSelectionFormula(this.formula);

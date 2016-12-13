@@ -8,7 +8,7 @@
 				server="HLINK/HERMES" 
 				database="testDxlExport.nsf" 
 				formula="Form = 'Depannage'"
-				toFile="depannage.xml"/>
+				toFile="test/depannage.xml"/>
 		<dxlExport 
 				server="HLINK/HERMES" 
 				database="testDxlExport.nsf" 

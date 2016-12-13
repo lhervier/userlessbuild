@@ -9,6 +9,6 @@
 				database="testFieldExport.nsf" 
 				formula="Form = 'test'"
 				fields="ChampTexte,ChampTexteMulti,ChampRichText"
-				toFile="field.xml"/>
+				toFile="test/field.xml"/>
 	</target>
 </project>

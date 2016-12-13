@@ -91,13 +91,16 @@ public class FieldExport extends BaseNotesTask {
 		DxlExporter exporter = null;
 		Document doc = null;
 		try {
-			// Build the document collection
-			db = this.openDatabase(this.server, this.database);
+			// Open the stream
 			stream = session.createStream();
 			File f = new File(this.getProject().getProperty("basedir") + "/" + this.toFile);
+			Utils.createFolder(f.getParentFile());		// Ensure parent folder exists
 			if( !stream.open(f.getAbsolutePath()) )
 				throw new BuildException("Unable to open file " + toFile + " for writing");
 			stream.truncate();
+			
+			// Build the document collection
+			db = this.openDatabase(this.server, this.database);
 			nc = db.createNoteCollection(false);
 			nc.setSelectDocuments(true);
 			nc.setSelectionFormula(this.formula);
