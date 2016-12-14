@@ -1,14 +1,43 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="userlessbuild-ant-tasks" basedir="." default="jar">
-
-    <property name="src.dir" value="src"/>
+<project name="userlessbuild-ant-tasks" basedir="." default="build">
+	<property name="notes.home" value="D:/IBM/Notes"/>
+	<property name="src.dir" value="src"/>
     <property name="classes.dir" value="bin"/>
+	<property name="resources.dir" value="resources"/>
+	<property name="build.dir" value="build"/>
+	<property name="version" value="1.1.b2"/>
 	
     <target name="clean" description="Delete all generated files">
-        <delete file="${ant.project.name}.jar"/>
+        <delete dir="${classes.dir}"/>
+		<delete dir="${build.dir}"/>
     </target>
-   
+   	
+	<target name="compile" description="Generating java classes">
+		<condition property="notes.jar.exists">
+			<resourceexists>
+				<file file="${notes.home}/jvm/lib/ext/Notes.jar"/>
+			</resourceexists>
+		</condition>
+		<fail unless="notes.jar.exists" message="The notes.home property must point to the root of your local IBM Notes folder"/>
+		<mkdir dir="${classes.dir}"/>
+		<javac
+				srcdir="${src.dir}"
+				destdir="${classes.dir}"
+				debug="on">
+			<classpath>
+				<fileset dir="lib" includes="*.jar"/>
+				<fileset file="${notes.home}/jvm/lib/ext/Notes.jar"/>
+			</classpath>
+		</javac>
+	</target>
+	
     <target name="jar" description="JARs the Task" depends="clean">
-        <jar destfile="${ant.project.name}.jar" basedir="${classes.dir}"/>
+		<mkdir dir="${build.dir}"/>
+        <jar destfile="${build.dir}/${ant.project.name}-${version}.jar">
+        	<fileset dir="${classes.dir}"/>
+        	<fileset dir="${resources.dir}"/>
+    	</jar>
     </target>
+	
+	<target name="build" depends="clean,compile,jar"/>
 </project>
