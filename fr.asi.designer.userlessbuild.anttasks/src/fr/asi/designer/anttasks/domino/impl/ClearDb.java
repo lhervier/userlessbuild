@@ -20,7 +20,10 @@ public class ClearDb extends BaseDatabaseSetTask {
 	
 	@Override
 	public void execute(Session session, String server, String database) throws NotesException {
-		this.log("Clearing all content in database '" + server + "!!" + database + "'");
+		if( this.formula == null )
+			this.log("Clearing all content in database '" + server + "!!" + database + "'");
+		else
+			this.log("Clearing '" + this.formula + "' in database '" + server + "!!" + database + "'");
 		Database db = null;
 		DocumentCollection coll = null;
 		try {
