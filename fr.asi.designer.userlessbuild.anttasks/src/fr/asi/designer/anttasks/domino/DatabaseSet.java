@@ -6,7 +6,6 @@ import java.util.List;
 import lotus.domino.Database;
 import lotus.domino.DbDirectory;
 import lotus.domino.NotesException;
-import lotus.domino.Session;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**
@@ -16,9 +15,9 @@ import fr.asi.designer.anttasks.util.Utils;
 public class DatabaseSet {
 
 	/**
-	 * The server to search for the databases
+	 * the parent task
 	 */
-	private String server;
+	private BaseDatabaseSetTask parentTask;
 	
 	/**
 	 * A template name the databases must inherit from
@@ -29,11 +28,6 @@ public class DatabaseSet {
 	 * A database name
 	 */
 	private String database;
-	
-	/**
-	 * The NotesSession
-	 */
-	private Session session;
 	
 	/**
 	 * Return the databases path
@@ -49,10 +43,10 @@ public class DatabaseSet {
 		else if( !Utils.isEmpty(this.template) ) {
 			DbDirectory dir = null;
 			try {
-				dir = this.session.getDbDirectory(DatabaseSet.this.server);
+				dir = this.parentTask.getSession().getDbDirectory(this.parentTask.getServer());
 				Database db = dir.getFirstDatabase(DbDirectory.DATABASE);
 				while( db != null ) {
-					if( db.getDesignTemplateName().equals(DatabaseSet.this.template) )
+					if( db.getDesignTemplateName().equals(this.template) )
 						ret.add(db.getFilePath());
 					db = dir.getNextDatabase();
 				}
@@ -66,17 +60,10 @@ public class DatabaseSet {
 	// ===============================================================================================
 	
 	/**
-	 * @param session the session to set
+	 * @param parentTask the parentTask to set
 	 */
-	void setSession(Session session) {
-		this.session = session;
-	}
-
-	/**
-	 * @param server the server to set
-	 */
-	void setServer(String server) {
-		this.server = server;
+	void setParentTask(BaseDatabaseSetTask parentTask) {
+		this.parentTask = parentTask;
 	}
 
 	/**

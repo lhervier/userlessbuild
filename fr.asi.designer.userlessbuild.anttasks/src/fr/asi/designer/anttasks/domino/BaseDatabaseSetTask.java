@@ -33,8 +33,7 @@ public abstract class BaseDatabaseSetTask extends BaseNotesTask {
 	 */
 	public DatabaseSet createDatabaseSet() {
 		DatabaseSet ret = new DatabaseSet();
-		ret.setServer(this.server);
-		ret.setSession(this.getSession());
+		ret.setParentTask(this);
 		this.databases.add(ret);
 		return ret;
 	}
@@ -85,6 +84,13 @@ public abstract class BaseDatabaseSetTask extends BaseNotesTask {
 
 	// ==============================================================
 	
+	/**
+	 * @return the server
+	 */
+	String getServer() {
+		return server;
+	}
+
 	/**
 	 * @param server the server to set
 	 */
