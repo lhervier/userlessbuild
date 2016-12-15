@@ -536,4 +536,27 @@ this condition allows you to define a property if the given database contains at
 This will create a default param document from the param.dxl file (file generated using the dxlExport task) only if such a document does not already exists in the database.
 
 Note that to use "if:set", you will need ant 1.6 min.
- 
+
+The condition can also be inside a databaseSet tag.
+
+	<dxlImport password="mypassword" server="SERVER/ASI" fromFile="params-prod.dxl">
+		<databaseSet template="mytemplate">
+			<not>
+				<documentExists formula="Form = 'Param'"/>
+			</not>
+		</databaseSet>
+	</dxlImport>
+
+## fieldsExists ##
+
+This is the same as documentExists, except that this task search for fields. It can also be used inside a databaseSet tag.
+
+	<dxlFieldImport password="mypassword" server="SERVER/ASI" fromFile="X_API_KEY-prod.dxl">
+		<databaseSet template="mytemplate">
+			<not>
+				<fieldsExists formula="Form = 'Param'" fields="X_API_KEY"/>
+			</not>
+		</databaseSet>
+	</dxlFieldImport>
+
+This will change the value of the X_API_KEY field into databases where it is not already defined.
