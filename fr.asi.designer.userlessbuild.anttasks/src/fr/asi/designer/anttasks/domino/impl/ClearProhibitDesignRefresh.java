@@ -18,7 +18,9 @@ public class ClearProhibitDesignRefresh extends BaseDesignElementTask {
 		if( pos == -1 )
 			return;
 		
-		log("Removing 'prohibit design refresh' flag from '" + designElement.getItemValueString("$TITLE") + "' (" + designElement.getUniversalID() + " / " + type + ")");
+		String server = designElement.getParentDatabase().getServer();
+		String db = designElement.getParentDatabase().getFilePath();
+		log(server + "!!" + db + ": Removing 'prohibit design refresh' flag from '" + designElement.getItemValueString("$TITLE") + "' (" + designElement.getUniversalID() + " / " + type + ")");
 		flags = flags.substring(0, pos) + flags.substring(pos + 1);
 		designElement.replaceItemValue("$Flags", flags);
 		designElement.save(true, false);

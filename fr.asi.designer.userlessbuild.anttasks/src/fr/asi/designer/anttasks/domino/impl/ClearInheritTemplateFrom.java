@@ -17,7 +17,10 @@ public class ClearInheritTemplateFrom extends BaseDesignElementTask {
 	protected void execute(Type type, Document designElement) throws NotesException {
 		if( !designElement.hasItem("$Class") )
 			return;
-		log("Removing template inheritance for '" + designElement.getItemValueString("$TITLE") + "' (" + designElement.getUniversalID() + " / " + type + ")");
+		
+		String server = designElement.getParentDatabase().getServer();
+		String db = designElement.getParentDatabase().getFilePath();
+		log(server + "!!" + db + ": Removing template inheritance for '" + designElement.getItemValueString("$TITLE") + "' (" + designElement.getUniversalID() + " / " + type + ")");
 		designElement.removeItem("$Class");
 		designElement.save(true, false);
 	}
