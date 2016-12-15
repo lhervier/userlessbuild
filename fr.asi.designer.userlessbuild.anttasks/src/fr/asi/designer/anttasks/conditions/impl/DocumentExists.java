@@ -4,7 +4,7 @@ import lotus.domino.Database;
 import lotus.domino.DocumentCollection;
 import lotus.domino.NotesException;
 import lotus.domino.Session;
-import fr.asi.designer.anttasks.conditions.BaseNotesCondition;
+import fr.asi.designer.anttasks.conditions.BaseServerDatabaseCondition;
 import fr.asi.designer.anttasks.util.Utils;
 
 /**
@@ -12,18 +12,8 @@ import fr.asi.designer.anttasks.util.Utils;
  * a database
  * @author Lionel HERVIER
  */
-public class DocumentExists extends BaseNotesCondition {
+public class DocumentExists extends BaseServerDatabaseCondition {
 
-	/**
-	 * The server
-	 */
-	private String server;
-	
-	/**
-	 * The database
-	 */
-	private String database;
-	
 	/**
 	 * The formula
 	 */
@@ -37,7 +27,7 @@ public class DocumentExists extends BaseNotesCondition {
 		Database db = null;
 		DocumentCollection coll = null;
 		try {
-			db = this.openDatabase(this.server, this.database);
+			db = this.openDatabase(this.getServer(), this.getDatabase());
 			coll = db.search(this.formula);
 			return coll.getCount() != 0;
 		} finally {
@@ -45,20 +35,8 @@ public class DocumentExists extends BaseNotesCondition {
 			Utils.recycleQuietly(db);
 		}
 	}
-
-	/**
-	 * @param server the server to set
-	 */
-	public void setServer(String server) {
-		this.server = server;
-	}
-
-	/**
-	 * @param database the database to set
-	 */
-	public void setDatabase(String database) {
-		this.database = database;
-	}
+	
+	// ===================================================================================
 
 	/**
 	 * @param formula the formula to set
@@ -66,5 +44,4 @@ public class DocumentExists extends BaseNotesCondition {
 	public void setFormula(String formula) {
 		this.formula = formula;
 	}
-
 }

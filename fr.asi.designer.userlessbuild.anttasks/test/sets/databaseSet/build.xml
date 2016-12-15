@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="test-databaseSet" basedir="." default="test">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<dxlImport
+				password="" 
+				server="HLINK/HERMES" 
+				fromFile="depannage.xml">
+			<databaseSet template="testDatabaseSet">
+				<not>
+					<documentExists formula="Form = 'Param'"/>
+				</not>
+			</databaseSet>
+		</dxlImport>
+	</target>
+</project>

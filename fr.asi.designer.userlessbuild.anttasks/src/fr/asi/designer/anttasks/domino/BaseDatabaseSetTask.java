@@ -82,15 +82,15 @@ public abstract class BaseDatabaseSetTask extends BaseNotesTask {
 		return (T) ret2;
 	}
 
-	// ==============================================================
-	
 	/**
 	 * @return the server
 	 */
 	String getServer() {
 		return server;
 	}
-
+	
+	// ==============================================================
+	
 	/**
 	 * @param server the server to set
 	 */

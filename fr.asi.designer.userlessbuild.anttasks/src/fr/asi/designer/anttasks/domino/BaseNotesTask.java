@@ -116,6 +116,13 @@ public abstract class BaseNotesTask extends Task {
 		return ret;
 	}
 	
+	/**
+	 * @return the password
+	 */
+	public String getPassword() {
+		return password;
+	}
+	
 	// ========================= GETTERS AND SETTERS ======================================
 	
 	/**

@@ -168,6 +168,7 @@ Some tasks supports a nested <databaseSet> tag which allows the task to run on m
 - server: the server to find the database
 - password: Password of the local ID file to access to the database
 - database: A database to run on. This is a shortcut when processing only one database.
+- You can also add a standard ant condition element.
 
 Launch a task on a single database :
  
@@ -197,6 +198,16 @@ Run on db1, db2 and on all database that inherits from tmpl :
 	<atask server="SERVER/ASI" password="mypassword" database="db1.nsf">
 		<databaseSet database="db2.nsf"/>
 		<databaseSet template="tmpl"/>
+	</atask>
+
+Run a task on all databases that inherits from tmpl, excluding the ones that contains a document based on the 'Param' form :
+
+	<atask server="SERVER/ASI" password="mypassword">
+		<databaseSet template="tmpl">
+			<not>
+				<documentExists formula="Form = 'Param'"/>
+			</not>
+		</databaseSet>
 	</atask>
 
 ### sendConsole ###
@@ -363,6 +374,16 @@ dxlImport can also work on a databaseSet. This task will import documents from t
 
 	<dxlImport password="mypassword" server="SERVER/ASI" fromFile="file.dxl">
 		<databaseSet template="mytemplate"/>
+	</dxlImport>
+
+Using a condition inside the databaseSet allows you to import a document conditionnally :
+
+	<dxlImport password="mypassword" server="SERVER/ASI" fromFile="param.dxl">
+		<databaseSet template="mytemplate">
+			<not>
+				<documentExists formula="Form = 'Param'"/>
+			</not>
+		</databaseSet>
 	</dxlImport>
 
 ### fieldExport ###
