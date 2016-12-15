@@ -7,7 +7,8 @@
 		<clearInheritTemplateFrom
 				password="" 
 				server="HLINK/HERMES" 
-				database="clearInheritTemplateFrom.nsf"
-				select="ALL"/>
+				select="ALL">
+			<databaseSet template="testClearInheritTemplateFrom"/>
+		</clearInheritTemplateFrom>
 	</target>
 </project>
