@@ -28,7 +28,6 @@ public class SignDatabaseWithServerId extends BaseNotesTask {
 	 */
 	@Override
 	public void execute(Session session) throws NotesException {
-		this.log("Signing database '" + this.server + "!!" + this.database + "' with the server ID");
 		AdministrationProcess ap = null;
 		try {
 			ap = session.createAdministrationProcess(server);
