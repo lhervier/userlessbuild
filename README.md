@@ -560,3 +560,17 @@ This is the same as documentExists, except that this task search for fields. It 
 	</dxlFieldImport>
 
 This will change the value of the X_API_KEY field into databases where it is not already defined.
+
+## targetExists ##
+
+OK, this task is not linked to the Domino world... It simply check if an external ant file contains a given target.
+
+	<condition property="target.exists">
+		<targetExists antFile="externalBuild.xml" target="myTarget"/>
+	</condition>
+	<ant 
+		if:set="target.exists"
+		antfile="externalBuild.xml"
+		target="myTarget"/>
+
+This script will launch the "myTarget" target from the "externalBuild.xml" ant file, only if the target exists.

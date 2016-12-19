@@ -36,4 +36,5 @@
 	<!-- Conditions -->
 	<typedef name="documentExists" classname="fr.asi.designer.anttasks.conditions.impl.DocumentExists"/>
 	<typedef name="fieldsExists" classname="fr.asi.designer.anttasks.conditions.impl.FieldsExists"/>
+	<typedef name="targetExists" classname="fr.asi.designer.anttasks.conditions.impl.TargetExists"/>
 </antlib>

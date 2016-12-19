@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="other" basedir=".">
+	<target name="test">
+		<echo>This target exists</echo>
+	</target>
+	<!--
+	<target name="doesNotExists">
+		<echo>This target does not exists</echo>
+	</target>
+	-->
+</project>

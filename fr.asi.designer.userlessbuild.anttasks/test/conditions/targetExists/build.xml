@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project 
+		name="test-targetExists" 
+		basedir="." 
+		default="test" 
+		xmlns:if="ant:if"
+		xmlns:unless="ant:unless">
+	<taskdef 
+			resource="userlessbuild.antlib.xml"
+	        classpath="../../../userlessbuild-ant-tasks.jar"/>
+	<target name="test">
+		<condition property="target.exists">
+			<targetExists antFile="otherBuild.xml" target="test"/>
+		</condition>
+		
+		<condition property="target.do.not.exists">
+			<targetExists antFile="otherBuild.xml" target="doNotExists"/>
+		</condition>
+		
+		<echo if:set="target.exists">Target test exists in otherBuild.xml</echo>
+		<echo unless:set="target.do.not.exists">Target doNotExists does NOT exists in otherBuild.xml</echo>
+	</target>
+</project>
